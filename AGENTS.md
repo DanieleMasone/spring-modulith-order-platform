@@ -30,7 +30,8 @@ Generated OpenAPI interfaces and DTOs must come from the contract in `src/main/r
 Maven is the source of truth. `./mvnw clean verify` must generate:
 
 * `target/site/jacoco/`
-* `target/generated-docs/openapi/`
+* `target/generated-docs/openapi/index.html`
+* `target/generated-docs/openapi/openapi.json`
 * `target/pages/`
 
 Maintain only `src/site/index.html` for the landing page. Do not create or commit duplicate HTML pages.
@@ -68,3 +69,7 @@ Do not introduce Kubernetes, microservices, Redis, Kafka, OAuth2, CQRS framework
 * Use constructor injection.
 * Keep public types in module API packages intentionally small.
 * Do not duplicate generated DTOs manually.
+
+## Versioned Tooling
+
+Keep Maven wrapper scripts and `.mvn/wrapper/maven-wrapper.jar` versioned so local and CI builds can run without a preinstalled Maven distribution.

@@ -21,7 +21,7 @@
     }
 
     @media (prefers-color-scheme: dark) {
-      :root {
+      :root:not([data-theme="light"]) {
         --bg: #101620;
         --panel: #151d29;
         --text: #eef2f7;
@@ -36,8 +36,26 @@
       }
     }
 
+    :root[data-theme="dark"] {
+      --bg: #101620;
+      --panel: #151d29;
+      --text: #eef2f7;
+      --muted: #a9b3c3;
+      --line: #2a3547;
+      --accent: #2dd4bf;
+      --accent-strong: #5eead4;
+      --warn: #fbbf24;
+      --rose: #fb7185;
+      --code: #0d1118;
+      --shadow: 0 20px 50px rgb(0 0 0 / 0.28);
+    }
+
     * {
       box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
@@ -59,6 +77,24 @@
       outline: 3px solid var(--warn);
       outline-offset: 4px;
       border-radius: 4px;
+    }
+
+    .skip-link {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      z-index: 30;
+      transform: translateY(-140%);
+      padding: 10px 14px;
+      border-radius: 6px;
+      background: var(--text);
+      color: var(--bg);
+      text-decoration: none;
+      transition: transform 150ms ease;
+    }
+
+    .skip-link:focus {
+      transform: translateY(0);
     }
 
     header {
@@ -84,6 +120,13 @@
       font-size: 0.98rem;
     }
 
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
     nav ul {
       margin: 0;
       padding: 0;
@@ -97,6 +140,18 @@
       color: var(--muted);
       font-size: 0.92rem;
       text-decoration: none;
+    }
+
+    .theme-toggle {
+      min-height: 36px;
+      padding: 6px 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel);
+      color: var(--text);
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.9rem;
     }
 
     main {
@@ -145,7 +200,8 @@
       font-size: 1.15rem;
     }
 
-    .actions {
+    .actions,
+    .links {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
@@ -230,13 +286,6 @@
       box-shadow: var(--shadow);
     }
 
-    .links {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-      margin-top: 18px;
-    }
-
     code {
       padding: 2px 5px;
       border-radius: 4px;
@@ -258,10 +307,15 @@
         flex-direction: column;
       }
 
+      .nav-actions {
+        width: 100%;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
       .hero,
       .two,
-      .grid,
-      .links {
+      .grid {
         grid-template-columns: 1fr;
       }
 
@@ -271,29 +325,42 @@
       }
     }
   </style>
+  <script>
+    (function () {
+      var storedTheme = localStorage.getItem("spring-modulith-order-platform-theme");
+      if (storedTheme === "light" || storedTheme === "dark") {
+        document.documentElement.dataset.theme = storedTheme;
+      }
+    }());
+  </script>
 </head>
 <body>
+  <a class="skip-link" href="#content">Skip to content</a>
   <header>
     <nav aria-label="Primary navigation">
       <strong>Spring Modulith Order Platform</strong>
-      <ul>
-        <li><a href="#architecture">Architecture</a></li>
-        <li><a href="#modules">Modules</a></li>
-        <li><a href="#docs">Generated docs</a></li>
-        <li><a href="#local">Local development</a></li>
-      </ul>
+      <div class="nav-actions">
+        <ul>
+          <li><a href="#architecture">Architecture</a></li>
+          <li><a href="#modules">Modules</a></li>
+          <li><a href="#docs">Generated docs</a></li>
+          <li><a href="#local">Local development</a></li>
+        </ul>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-pressed="false">Dark mode</button>
+      </div>
     </nav>
   </header>
 
-  <main>
+  <main id="content">
     <section class="hero" aria-labelledby="hero-title">
       <div>
         <h1 id="hero-title">Spring Modulith Order Platform</h1>
         <p class="lead">A production-oriented modular monolith for order management, built with Java 21, Spring Boot 4, Spring Modulith, PostgreSQL, Flyway, OpenAPI-first contracts and Testcontainers.</p>
-        <div class="actions" aria-label="Generated documentation links">
+        <div class="actions" aria-label="Project and generated documentation links">
           <a class="button primary" href="openapi/index.html">OpenAPI docs</a>
           <a class="button" href="jacoco/index.html">Coverage report</a>
-          <a class="button" href="openapi/order-platform-api.json">OpenAPI JSON</a>
+          <a class="button" href="openapi/openapi.json">OpenAPI JSON</a>
+          <a class="button" href="https://github.com/DanieleMasone/spring-modulith-order-platform">GitHub repository</a>
         </div>
       </div>
       <div class="signal" aria-label="Module dependency summary">
@@ -401,8 +468,9 @@ notifications
       <p>The Pages artifact is assembled from build outputs only. No generated report or generated OpenAPI page is committed to the repository.</p>
       <div class="links">
         <a class="button" href="openapi/index.html">OpenAPI HTML</a>
-        <a class="button" href="openapi/order-platform-api.json">OpenAPI JSON</a>
+        <a class="button" href="openapi/openapi.json">OpenAPI JSON</a>
         <a class="button" href="jacoco/index.html">JaCoCo report</a>
+        <a class="button" href="https://github.com/DanieleMasone/spring-modulith-order-platform">GitHub repository</a>
       </div>
     </section>
 
@@ -425,5 +493,38 @@ notifications
   <footer>
     <span>Generated by Maven from <code>src/site/index.html</code>.</span>
   </footer>
+  <script>
+    (function () {
+      var key = "spring-modulith-order-platform-theme";
+      var root = document.documentElement;
+      var toggle = document.querySelector("[data-theme-toggle]");
+      var prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+
+      function activeTheme() {
+        return root.dataset.theme || (prefersDark.matches ? "dark" : "light");
+      }
+
+      function updateToggle() {
+        var theme = activeTheme();
+        toggle.setAttribute("aria-pressed", String(theme === "dark"));
+        toggle.textContent = theme === "dark" ? "Light mode" : "Dark mode";
+      }
+
+      toggle.addEventListener("click", function () {
+        var nextTheme = activeTheme() === "dark" ? "light" : "dark";
+        root.dataset.theme = nextTheme;
+        localStorage.setItem(key, nextTheme);
+        updateToggle();
+      });
+
+      prefersDark.addEventListener("change", function () {
+        if (!root.dataset.theme) {
+          updateToggle();
+        }
+      });
+
+      updateToggle();
+    }());
+  </script>
 </body>
 </html>

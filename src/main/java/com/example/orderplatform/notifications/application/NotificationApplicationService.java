@@ -2,6 +2,7 @@ package com.example.orderplatform.notifications.application;
 
 import com.example.orderplatform.notifications.api.NotificationLog;
 import com.example.orderplatform.notifications.api.NotificationSummary;
+import com.example.orderplatform.notifications.domain.NotificationDraft;
 import com.example.orderplatform.notifications.infrastructure.NotificationEntity;
 import com.example.orderplatform.notifications.infrastructure.NotificationRepository;
 import com.example.orderplatform.orders.api.OrderCreatedEvent;
@@ -26,21 +27,21 @@ public class NotificationApplicationService implements NotificationLog {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void on(OrderCreatedEvent event) {
-        notifications.save(NotificationEntity.ready(
+        notifications.save(NotificationEntity.ready(new NotificationDraft(
                 "customer:" + event.customerId(),
                 "EMAIL",
                 "ORDER_CREATED",
-                "Order " + event.orderId() + " was submitted for " + event.totalAmount() + " " + event.currency() + "."));
+                "Order " + event.orderId() + " was submitted for " + event.totalAmount() + " " + event.currency() + ".")));
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void on(PaymentAuthorizedEvent event) {
-        notifications.save(NotificationEntity.ready(
+        notifications.save(NotificationEntity.ready(new NotificationDraft(
                 "operations",
                 "WEBHOOK",
                 "PAYMENT_AUTHORIZED",
-                "Payment " + event.paymentId() + " was authorized for order " + event.orderId() + "."));
+                "Payment " + event.paymentId() + " was authorized for order " + event.orderId() + ".")));
     }
 
     @Override

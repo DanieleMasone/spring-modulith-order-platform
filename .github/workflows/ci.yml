@@ -13,8 +13,8 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages-${{ github.ref }}
-  cancel-in-progress: true
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup Java 21
         uses: actions/setup-java@v5
@@ -38,20 +38,23 @@ jobs:
         run: |
           test -f target/site/jacoco/index.html
           test -f target/generated-docs/openapi/index.html
-          test -f target/generated-docs/openapi/order-platform-api.json
+          test -f target/generated-docs/openapi/openapi.json
           test -f target/pages/index.html
           test -f target/pages/jacoco/index.html
           test -f target/pages/openapi/index.html
-          test -f target/pages/openapi/order-platform-api.json
+          test -f target/pages/openapi/openapi.json
 
       - name: Docker Compose Validation
         run: docker compose config
 
       - name: Docker Image Build
-        run: docker build -t order-platform:${{ github.sha }} .
+        run: docker build -t spring-modulith-order-platform:${{ github.sha }} .
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
 
       - name: Upload Pages Artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: target/pages
 

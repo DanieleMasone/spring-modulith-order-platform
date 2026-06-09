@@ -1,14 +1,14 @@
 package com.example.orderplatform.customers.application;
 
-import com.example.orderplatform.BusinessRuleViolationException;
 import com.example.orderplatform.ResourceNotFoundException;
+import com.example.orderplatform.ResourceConflictException;
 import com.example.orderplatform.customers.api.CustomerDirectory;
 import com.example.orderplatform.customers.api.CustomerSnapshot;
+import com.example.orderplatform.customers.domain.CustomerRegistration;
 import com.example.orderplatform.customers.domain.CustomerStatus;
 import com.example.orderplatform.customers.infrastructure.CustomerEntity;
 import com.example.orderplatform.customers.infrastructure.CustomerRepository;
 import java.time.OffsetDateTime;
-import java.util.Locale;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,15 +24,15 @@ public class CustomerApplicationService implements CustomerDirectory {
     }
 
     public CustomerSnapshot createCustomer(String fullName, String email) {
-        String normalizedEmail = email.strip().toLowerCase(Locale.ROOT);
-        customers.findByEmail(normalizedEmail).ifPresent(existing -> {
-            throw new BusinessRuleViolationException("A customer with this email already exists.");
+        CustomerRegistration registration = CustomerRegistration.register(fullName, email);
+        customers.findByEmail(registration.email()).ifPresent(existing -> {
+            throw new ResourceConflictException("A customer with this email already exists.");
         });
 
         CustomerEntity customer = new CustomerEntity(
                 UUID.randomUUID(),
-                normalizedEmail,
-                fullName.strip(),
+                registration.email(),
+                registration.fullName(),
                 CustomerStatus.ACTIVE,
                 OffsetDateTime.now());
 

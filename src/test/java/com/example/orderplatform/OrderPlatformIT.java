@@ -6,33 +6,22 @@ import com.example.orderplatform.customers.application.CustomerApplicationServic
 import com.example.orderplatform.notifications.api.NotificationLog;
 import com.example.orderplatform.notifications.api.NotificationSummary;
 import com.example.orderplatform.orders.api.OrderCommand;
+import com.example.orderplatform.orders.api.OrderCreatedEvent;
 import com.example.orderplatform.orders.api.OrderItemCommand;
 import com.example.orderplatform.orders.api.OrderManagement;
+import com.example.orderplatform.payments.api.PaymentAuthorizedEvent;
 import com.example.orderplatform.payments.api.PaymentManagement;
 import java.math.BigDecimal;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import org.springframework.test.context.event.ApplicationEvents;
+import org.springframework.test.context.event.RecordApplicationEvents;
 
 @SpringBootTest
-@Testcontainers(disabledWithoutDocker = true)
-class OrderPlatformIT {
-
-    @Container
-    static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:17-alpine");
-
-    @DynamicPropertySource
-    static void postgresProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-    }
+@RecordApplicationEvents
+class OrderPlatformIT extends AbstractPostgresIntegrationTest {
 
     @Autowired
     CustomerApplicationService customers;
@@ -46,6 +35,9 @@ class OrderPlatformIT {
     @Autowired
     NotificationLog notifications;
 
+    @Autowired
+    ApplicationEvents applicationEvents;
+
     @Test
     void createsOrderPreparesPaymentAndRecordsNotifications() {
         var customer = customers.createCustomer("Ada Lovelace", "ada.lovelace@example.com");
@@ -56,12 +48,16 @@ class OrderPlatformIT {
 
         assertThat(order.status()).isEqualTo("SUBMITTED");
         assertThat(order.total().amount()).isEqualByComparingTo(new BigDecimal("49.97"));
+        assertThat(applicationEvents.stream(OrderCreatedEvent.class))
+                .anySatisfy(event -> assertThat(event.orderId()).isEqualTo(order.id()));
 
         var pendingPayment = payments.findByOrderId(order.id()).orElseThrow();
         assertThat(pendingPayment.status()).isEqualTo("PENDING");
 
         var authorizedPayment = payments.authorize(order.id(), order.total());
         assertThat(authorizedPayment.status()).isEqualTo("AUTHORIZED");
+        assertThat(applicationEvents.stream(PaymentAuthorizedEvent.class))
+                .anySatisfy(event -> assertThat(event.paymentId()).isEqualTo(authorizedPayment.id()));
 
         assertThat(notifications.listRecent())
                 .extracting(NotificationSummary::type)

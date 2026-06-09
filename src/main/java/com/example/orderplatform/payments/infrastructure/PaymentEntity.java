@@ -1,5 +1,6 @@
 package com.example.orderplatform.payments.infrastructure;
 
+import com.example.orderplatform.BusinessRuleViolationException;
 import com.example.orderplatform.Money;
 import com.example.orderplatform.payments.domain.PaymentStatus;
 import jakarta.persistence.Entity;
@@ -48,6 +49,9 @@ public class PaymentEntity {
     }
 
     public void authorize(OffsetDateTime authorizedAt) {
+        if (status != PaymentStatus.PENDING) {
+            throw new BusinessRuleViolationException("Only pending payments can be authorized.");
+        }
         this.status = PaymentStatus.AUTHORIZED;
         this.authorizedAt = authorizedAt;
     }

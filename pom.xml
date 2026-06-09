@@ -21,11 +21,11 @@
         <java.version>21</java.version>
         <spring-modulith.version>2.0.6</spring-modulith.version>
         <testcontainers.version>1.21.4</testcontainers.version>
-        <openapi-generator.version>7.22.0</openapi-generator.version>
+        <openapi-generator.version>7.23.0</openapi-generator.version>
         <swagger-annotations.version>2.2.50</swagger-annotations.version>
-        <jacoco.version>0.8.14</jacoco.version>
+        <jacoco.version>0.8.15</jacoco.version>
         <maven-failsafe-plugin.version>3.5.4</maven-failsafe-plugin.version>
-        <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
+        <maven-antrun-plugin.version>3.2.0</maven-antrun-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -90,6 +90,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -205,25 +210,6 @@
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>copy-openapi-json</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/generated-docs/openapi</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${project.basedir}/src/main/resources/openapi</directory>
-                                    <includes>
-                                        <include>order-platform-api.json</include>
-                                    </includes>
-                                    <filtering>false</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>copy-site-index</id>
                         <phase>verify</phase>
                         <goals>
@@ -278,6 +264,20 @@
                 <version>${maven-antrun-plugin.version}</version>
                 <executions>
                     <execution>
+                        <id>copy-openapi-json</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <mkdir dir="${project.build.directory}/generated-docs/openapi"/>
+                                <copy file="${project.basedir}/src/main/resources/openapi/order-platform-api.json"
+                                      tofile="${project.build.directory}/generated-docs/openapi/openapi.json"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>verify-generated-artifacts</id>
                         <phase>verify</phase>
                         <goals>
@@ -287,11 +287,11 @@
                             <target>
                                 <available file="${project.build.directory}/site/jacoco/index.html" property="jacoco.report.exists"/>
                                 <available file="${project.build.directory}/generated-docs/openapi/index.html" property="openapi.docs.exists"/>
-                                <available file="${project.build.directory}/generated-docs/openapi/order-platform-api.json" property="openapi.json.exists"/>
+                                <available file="${project.build.directory}/generated-docs/openapi/openapi.json" property="openapi.json.exists"/>
                                 <available file="${project.build.directory}/pages/index.html" property="pages.index.exists"/>
                                 <available file="${project.build.directory}/pages/jacoco/index.html" property="pages.jacoco.exists"/>
                                 <available file="${project.build.directory}/pages/openapi/index.html" property="pages.openapi.exists"/>
-                                <available file="${project.build.directory}/pages/openapi/order-platform-api.json" property="pages.openapi.json.exists"/>
+                                <available file="${project.build.directory}/pages/openapi/openapi.json" property="pages.openapi.json.exists"/>
                                 <fail unless="jacoco.report.exists" message="JaCoCo report was not generated."/>
                                 <fail unless="openapi.docs.exists" message="OpenAPI HTML documentation was not generated."/>
                                 <fail unless="openapi.json.exists" message="OpenAPI JSON was not copied to generated docs."/>

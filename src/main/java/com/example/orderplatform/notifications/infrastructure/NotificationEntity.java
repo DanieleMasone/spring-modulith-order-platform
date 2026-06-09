@@ -1,5 +1,6 @@
 package com.example.orderplatform.notifications.infrastructure;
 
+import com.example.orderplatform.notifications.domain.NotificationDraft;
 import com.example.orderplatform.notifications.domain.NotificationStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -39,7 +40,18 @@ public class NotificationEntity {
     }
 
     public static NotificationEntity ready(String recipient, String channel, String type, String payload) {
-        return new NotificationEntity(UUID.randomUUID(), recipient, channel, type, payload, NotificationStatus.READY, OffsetDateTime.now());
+        return ready(new NotificationDraft(recipient, channel, type, payload));
+    }
+
+    public static NotificationEntity ready(NotificationDraft draft) {
+        return new NotificationEntity(
+                UUID.randomUUID(),
+                draft.recipient(),
+                draft.channel(),
+                draft.type(),
+                draft.payload(),
+                NotificationStatus.READY,
+                OffsetDateTime.now());
     }
 
     public UUID id() {
