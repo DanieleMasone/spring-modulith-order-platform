@@ -1,0 +1,393 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Spring Modulith Order Platform API",
+    "description": "Contract-first API for a modular monolith order management platform.",
+    "version": "0.1.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Local development"
+    }
+  ],
+  "tags": [
+    { "name": "Customers" },
+    { "name": "Pricing" },
+    { "name": "Orders" },
+    { "name": "Payments" },
+    { "name": "Notifications" }
+  ],
+  "paths": {
+    "/customers": {
+      "post": {
+        "tags": ["Customers"],
+        "operationId": "createCustomer",
+        "summary": "Create a customer",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CustomerCreateRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Customer created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CustomerResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/Problem" },
+          "409": { "$ref": "#/components/responses/Problem" }
+        }
+      }
+    },
+    "/customers/{customerId}": {
+      "get": {
+        "tags": ["Customers"],
+        "operationId": "getCustomer",
+        "summary": "Get a customer by id",
+        "parameters": [
+          { "$ref": "#/components/parameters/CustomerId" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Customer",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CustomerResponse" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/Problem" }
+        }
+      }
+    },
+    "/pricing/quote": {
+      "post": {
+        "tags": ["Pricing"],
+        "operationId": "quotePrices",
+        "summary": "Quote a basket of products",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PricingQuoteRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Pricing quote",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PricingQuoteResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/Problem" },
+          "404": { "$ref": "#/components/responses/Problem" }
+        }
+      }
+    },
+    "/orders": {
+      "post": {
+        "tags": ["Orders"],
+        "operationId": "createOrder",
+        "summary": "Create an order",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/OrderCreateRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Order created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/OrderResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/Problem" },
+          "404": { "$ref": "#/components/responses/Problem" }
+        }
+      }
+    },
+    "/orders/{orderId}": {
+      "get": {
+        "tags": ["Orders"],
+        "operationId": "getOrder",
+        "summary": "Get an order by id",
+        "parameters": [
+          { "$ref": "#/components/parameters/OrderId" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/OrderResponse" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/Problem" }
+        }
+      }
+    },
+    "/payments/authorize": {
+      "post": {
+        "tags": ["Payments"],
+        "operationId": "authorizePayment",
+        "summary": "Authorize payment for an order",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PaymentAuthorizeRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Payment authorized",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PaymentResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/Problem" },
+          "404": { "$ref": "#/components/responses/Problem" }
+        }
+      }
+    },
+    "/payments/{paymentId}": {
+      "get": {
+        "tags": ["Payments"],
+        "operationId": "getPayment",
+        "summary": "Get a payment by id",
+        "parameters": [
+          { "$ref": "#/components/parameters/PaymentId" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Payment",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PaymentResponse" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/Problem" }
+        }
+      }
+    },
+    "/notifications": {
+      "get": {
+        "tags": ["Notifications"],
+        "operationId": "listNotifications",
+        "summary": "List generated notification records",
+        "responses": {
+          "200": {
+            "description": "Notifications",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/NotificationResponse" }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "CustomerId": {
+        "name": "customerId",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string", "format": "uuid" }
+      },
+      "OrderId": {
+        "name": "orderId",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string", "format": "uuid" }
+      },
+      "PaymentId": {
+        "name": "paymentId",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string", "format": "uuid" }
+      }
+    },
+    "responses": {
+      "Problem": {
+        "description": "RFC7807 problem detail",
+        "content": {
+          "application/problem+json": {
+            "schema": { "$ref": "#/components/schemas/ProblemDetail" }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "CustomerCreateRequest": {
+        "type": "object",
+        "required": ["email", "fullName"],
+        "properties": {
+          "email": { "type": "string", "format": "email", "maxLength": 320 },
+          "fullName": { "type": "string", "minLength": 2, "maxLength": 160 }
+        }
+      },
+      "CustomerResponse": {
+        "type": "object",
+        "required": ["id", "email", "fullName", "status"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "email": { "type": "string", "format": "email" },
+          "fullName": { "type": "string" },
+          "status": { "type": "string", "enum": ["ACTIVE", "SUSPENDED"] }
+        }
+      },
+      "PricingQuoteRequest": {
+        "type": "object",
+        "required": ["items"],
+        "properties": {
+          "items": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "$ref": "#/components/schemas/OrderItemRequest" }
+          }
+        }
+      },
+      "PricingQuoteResponse": {
+        "type": "object",
+        "required": ["total", "lines"],
+        "properties": {
+          "total": { "$ref": "#/components/schemas/Money" },
+          "lines": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/PricingLineResponse" }
+          }
+        }
+      },
+      "PricingLineResponse": {
+        "type": "object",
+        "required": ["productCode", "quantity", "unitPrice", "lineTotal"],
+        "properties": {
+          "productCode": { "type": "string" },
+          "quantity": { "type": "integer", "format": "int32", "minimum": 1 },
+          "unitPrice": { "$ref": "#/components/schemas/Money" },
+          "lineTotal": { "$ref": "#/components/schemas/Money" }
+        }
+      },
+      "OrderCreateRequest": {
+        "type": "object",
+        "required": ["customerId", "items"],
+        "properties": {
+          "customerId": { "type": "string", "format": "uuid" },
+          "items": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "$ref": "#/components/schemas/OrderItemRequest" }
+          }
+        }
+      },
+      "OrderItemRequest": {
+        "type": "object",
+        "required": ["productCode", "quantity"],
+        "properties": {
+          "productCode": { "type": "string", "minLength": 1, "maxLength": 64 },
+          "quantity": { "type": "integer", "format": "int32", "minimum": 1 }
+        }
+      },
+      "OrderResponse": {
+        "type": "object",
+        "required": ["id", "customerId", "status", "total", "lines", "createdAt"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "customerId": { "type": "string", "format": "uuid" },
+          "status": { "type": "string", "enum": ["SUBMITTED", "CANCELLED"] },
+          "total": { "$ref": "#/components/schemas/Money" },
+          "lines": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/OrderLineResponse" }
+          },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "OrderLineResponse": {
+        "type": "object",
+        "required": ["productCode", "quantity", "unitPrice", "lineTotal"],
+        "properties": {
+          "productCode": { "type": "string" },
+          "quantity": { "type": "integer", "format": "int32", "minimum": 1 },
+          "unitPrice": { "$ref": "#/components/schemas/Money" },
+          "lineTotal": { "$ref": "#/components/schemas/Money" }
+        }
+      },
+      "PaymentAuthorizeRequest": {
+        "type": "object",
+        "required": ["orderId", "amount"],
+        "properties": {
+          "orderId": { "type": "string", "format": "uuid" },
+          "amount": { "$ref": "#/components/schemas/Money" }
+        }
+      },
+      "PaymentResponse": {
+        "type": "object",
+        "required": ["id", "orderId", "status", "amount", "createdAt"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "orderId": { "type": "string", "format": "uuid" },
+          "status": { "type": "string", "enum": ["PENDING", "AUTHORIZED", "DECLINED"] },
+          "amount": { "$ref": "#/components/schemas/Money" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "authorizedAt": { "type": "string", "format": "date-time", "nullable": true }
+        }
+      },
+      "NotificationResponse": {
+        "type": "object",
+        "required": ["id", "recipient", "channel", "type", "status", "createdAt"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "recipient": { "type": "string" },
+          "channel": { "type": "string", "enum": ["EMAIL", "WEBHOOK"] },
+          "type": { "type": "string" },
+          "status": { "type": "string", "enum": ["READY", "SENT"] },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Money": {
+        "type": "object",
+        "required": ["amount", "currency"],
+        "properties": {
+          "amount": { "type": "number", "minimum": 0, "multipleOf": 0.01 },
+          "currency": { "type": "string", "minLength": 3, "maxLength": 3, "example": "EUR" }
+        }
+      },
+      "ProblemDetail": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "format": "uri" },
+          "title": { "type": "string" },
+          "status": { "type": "integer", "format": "int32" },
+          "detail": { "type": "string" },
+          "instance": { "type": "string", "format": "uri" }
+        }
+      }
+    }
+  }
+}

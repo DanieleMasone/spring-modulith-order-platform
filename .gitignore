@@ -1,0 +1,34 @@
+# Build output
+target/
+*.class
+
+# Maven wrapper remains versioned; local Maven state does not.
+.mvn/wrapper/maven-wrapper.jar.tmp
+
+# Generated documentation and Pages content
+spring-modulith-docs/
+
+# IDEs
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.vscode/
+
+# Logs and runtime files
+*.log
+logs/
+hs_err_pid*
+replay_pid*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+~$*

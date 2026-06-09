@@ -1,0 +1,70 @@
+# AGENTS.md
+
+## Project Goal
+
+Build and maintain a production-oriented modular monolith order management platform suitable for senior backend and architecture interviews. The repository should demonstrate disciplined engineering choices, not tutorial code or artificial enterprise complexity.
+
+## Architecture Principles
+
+* The application is a single Spring Boot 4 deployable governed by Spring Modulith.
+* Business modules are direct packages below `com.example.orderplatform`: `customers`, `pricing`, `orders`, `payments`, `notifications`.
+* Each module may use `api`, `application`, `domain` and `infrastructure` packages. Do not add layers unless they remove real complexity.
+* Cross-module references must go through named API interfaces or domain events.
+* Module dependency rules live in module-level `package-info.java` files and must remain enforceable by `ApplicationModules.verify()`.
+* Domain events are used for meaningful collaboration after state changes. Do not create decorative event chains.
+
+## Generated Files Policy
+
+Do not commit generated files from:
+
+* `target/`
+* `target/generated-sources/openapi/`
+* `target/generated-docs/openapi/`
+* `target/site/jacoco/`
+* `target/pages/`
+
+Generated OpenAPI interfaces and DTOs must come from the contract in `src/main/resources/openapi`.
+
+## Documentation Generation Policy
+
+Maven is the source of truth. `./mvnw clean verify` must generate:
+
+* `target/site/jacoco/`
+* `target/generated-docs/openapi/`
+* `target/pages/`
+
+Maintain only `src/site/index.html` for the landing page. Do not create or commit duplicate HTML pages.
+
+## Testing Policy
+
+* Unit tests cover business rules and value objects.
+* Integration tests use Testcontainers with PostgreSQL.
+* Do not add H2.
+* Architecture tests must fail the build when module boundaries are violated.
+* Keep tests focused on behavior and architectural risk.
+
+## CI/CD Policy
+
+The CI workflow must:
+
+* Run a single Maven `clean verify`.
+* Verify generated artifacts.
+* Validate Docker Compose.
+* Build the Docker image after tests pass.
+* Publish only `target/pages` to GitHub Pages.
+
+Avoid duplicate Maven executions and unnecessary matrix builds.
+
+## Excluded Technologies
+
+Do not introduce Kubernetes, microservices, Redis, Kafka, OAuth2, CQRS frameworks, outbox pattern, Arquillian or schema registry unless the project goals are explicitly changed.
+
+## Coding Conventions
+
+* Use Java 21 language features conservatively.
+* Prefer records for immutable API and domain snapshots.
+* Keep JPA entities inside module `infrastructure` packages.
+* Use RFC7807 `ProblemDetail` for REST errors.
+* Use constructor injection.
+* Keep public types in module API packages intentionally small.
+* Do not duplicate generated DTOs manually.
