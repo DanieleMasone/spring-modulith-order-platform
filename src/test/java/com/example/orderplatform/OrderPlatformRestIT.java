@@ -29,6 +29,11 @@ class OrderPlatformRestIT extends AbstractPostgresIntegrationTest {
     void declaredEndpointsWorkEndToEnd() throws Exception {
         String customerId = createCustomer("Grace Hopper", uniqueEmail()).id();
 
+        mockMvc.perform(get("/customers/{customerId}", customerId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(customerId))
+                .andExpect(jsonPath("$.fullName").value("Grace Hopper"));
+
         mockMvc.perform(post("/pricing/quote")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -79,7 +84,9 @@ class OrderPlatformRestIT extends AbstractPostgresIntegrationTest {
                                 """))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
-                .andExpect(jsonPath("$.title").value("Validation failed"));
+                .andExpect(jsonPath("$.type").value("https://example.com/problems/validation-failed"))
+                .andExpect(jsonPath("$.title").value("Validation failed"))
+                .andExpect(jsonPath("$.status").value(400));
     }
 
     @Test
@@ -87,7 +94,26 @@ class OrderPlatformRestIT extends AbstractPostgresIntegrationTest {
         mockMvc.perform(get("/orders/{orderId}", UUID.randomUUID()))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
-                .andExpect(jsonPath("$.title").value("Resource not found"));
+                .andExpect(jsonPath("$.type").value("https://example.com/problems/resource-not-found"))
+                .andExpect(jsonPath("$.title").value("Resource not found"))
+                .andExpect(jsonPath("$.status").value(404));
+    }
+
+    @Test
+    void returnsProblemDetailsForMissingProducts() throws Exception {
+        mockMvc.perform(post("/pricing/quote")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "items": [
+                                    { "productCode": "SKU-MISSING", "quantity": 1 }
+                                  ]
+                                }
+                                """))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.title").value("Resource not found"))
+                .andExpect(jsonPath("$.status").value(404));
     }
 
     @Test
@@ -105,7 +131,8 @@ class OrderPlatformRestIT extends AbstractPostgresIntegrationTest {
                                 """.formatted(orderId)))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
-                .andExpect(jsonPath("$.title").value("Business rule violation"));
+                .andExpect(jsonPath("$.title").value("Business rule violation"))
+                .andExpect(jsonPath("$.status").value(400));
     }
 
     @Test
@@ -123,7 +150,8 @@ class OrderPlatformRestIT extends AbstractPostgresIntegrationTest {
                                 """.formatted(email)))
                 .andExpect(status().isConflict())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
-                .andExpect(jsonPath("$.title").value("Conflict"));
+                .andExpect(jsonPath("$.title").value("Conflict"))
+                .andExpect(jsonPath("$.status").value(409));
     }
 
     private CustomerPayload createCustomer(String fullName, String email) throws Exception {

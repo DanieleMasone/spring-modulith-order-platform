@@ -21,6 +21,15 @@ public class PriceCatalogItemEntity {
     protected PriceCatalogItemEntity() {
     }
 
+    public PriceCatalogItemEntity(String productCode, String description, BigDecimal unitAmount, String currency, boolean active, OffsetDateTime updatedAt) {
+        this.productCode = productCode;
+        this.description = description;
+        this.unitAmount = unitAmount;
+        this.currency = currency;
+        this.active = active;
+        this.updatedAt = updatedAt;
+    }
+
     public String productCode() {
         return productCode;
     }

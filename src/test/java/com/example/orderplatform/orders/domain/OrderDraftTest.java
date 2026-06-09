@@ -29,6 +29,21 @@ class OrderDraftTest {
     }
 
     @Test
+    void rejectsInvalidOrderLines() {
+        assertThatThrownBy(() -> new OrderLineDraft("", 1, Money.of(new BigDecimal("14.99"), "EUR")))
+                .isInstanceOf(BusinessRuleViolationException.class)
+                .hasMessageContaining("Product code");
+
+        assertThatThrownBy(() -> new OrderLineDraft("SKU-COFFEE-MUG", 0, Money.of(new BigDecimal("14.99"), "EUR")))
+                .isInstanceOf(BusinessRuleViolationException.class)
+                .hasMessageContaining("Quantity");
+
+        assertThatThrownBy(() -> new OrderLineDraft("SKU-COFFEE-MUG", 1, null))
+                .isInstanceOf(BusinessRuleViolationException.class)
+                .hasMessageContaining("Unit price");
+    }
+
+    @Test
     void rejectsMixedCurrencies() {
         assertThatThrownBy(() -> new OrderDraft(UUID.randomUUID(), List.of(
                 new OrderLineDraft("SKU-COFFEE-MUG", 1, Money.of(new BigDecimal("14.99"), "EUR")),
