@@ -3,98 +3,160 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Spring Modulith Order Platform: a production-oriented modular monolith backend portfolio project.">
+  <meta name="theme-color" content="#f6f8fb">
   <title>Spring Modulith Order Platform</title>
   <style>
     :root {
       color-scheme: light dark;
-      --bg: #f8fafc;
-      --panel: #ffffff;
-      --text: #172033;
-      --muted: #5d687a;
-      --line: #d8dee8;
+      --bg: #f6f8fb;
+      --surface: #ffffff;
+      --surface-soft: #eef3f7;
+      --text: #142033;
+      --muted: #56647a;
+      --subtle: #738096;
+      --line: #d7dee9;
       --accent: #0f766e;
       --accent-strong: #0b5d56;
-      --warn: #b45309;
+      --accent-soft: #d7f5ef;
+      --blue: #1d4ed8;
+      --blue-soft: #dbeafe;
+      --amber: #b45309;
+      --amber-soft: #fef3c7;
       --rose: #be123c;
-      --code: #eef4f8;
-      --shadow: 0 16px 40px rgb(15 23 42 / 0.10);
+      --rose-soft: #ffe4e6;
+      --code-bg: #eaf0f6;
+      --shadow: 0 20px 45px rgb(20 32 51 / 0.10);
+      --radius: 8px;
+      --max: 1120px;
     }
 
     @media (prefers-color-scheme: dark) {
       :root:not([data-theme="light"]) {
-        --bg: #101620;
-        --panel: #151d29;
-        --text: #eef2f7;
-        --muted: #a9b3c3;
-        --line: #2a3547;
+        --bg: #0e141d;
+        --surface: #151d29;
+        --surface-soft: #101722;
+        --text: #eef3f8;
+        --muted: #aeb8c8;
+        --subtle: #8794a8;
+        --line: #2b3749;
         --accent: #2dd4bf;
         --accent-strong: #5eead4;
-        --warn: #fbbf24;
+        --accent-soft: #10342f;
+        --blue: #93c5fd;
+        --blue-soft: #152c4f;
+        --amber: #fbbf24;
+        --amber-soft: #3c2d11;
         --rose: #fb7185;
-        --code: #0d1118;
-        --shadow: 0 20px 50px rgb(0 0 0 / 0.28);
+        --rose-soft: #441926;
+        --code-bg: #0b111a;
+        --shadow: 0 24px 54px rgb(0 0 0 / 0.28);
       }
     }
 
     :root[data-theme="dark"] {
-      --bg: #101620;
-      --panel: #151d29;
-      --text: #eef2f7;
-      --muted: #a9b3c3;
-      --line: #2a3547;
+      --bg: #0e141d;
+      --surface: #151d29;
+      --surface-soft: #101722;
+      --text: #eef3f8;
+      --muted: #aeb8c8;
+      --subtle: #8794a8;
+      --line: #2b3749;
       --accent: #2dd4bf;
       --accent-strong: #5eead4;
-      --warn: #fbbf24;
+      --accent-soft: #10342f;
+      --blue: #93c5fd;
+      --blue-soft: #152c4f;
+      --amber: #fbbf24;
+      --amber-soft: #3c2d11;
       --rose: #fb7185;
-      --code: #0d1118;
-      --shadow: 0 20px 50px rgb(0 0 0 / 0.28);
+      --rose-soft: #441926;
+      --code-bg: #0b111a;
+      --shadow: 0 24px 54px rgb(0 0 0 / 0.28);
     }
 
-    * {
+    *,
+    *::before,
+    *::after {
       box-sizing: border-box;
     }
 
     html {
       scroll-behavior: smooth;
-    }
-
-    img,
-    svg {
-      max-width: 100%;
+      -webkit-text-size-adjust: 100%;
     }
 
     body {
+      min-width: 320px;
       margin: 0;
-      background: var(--bg);
+      background:
+        radial-gradient(circle at top left, var(--accent-soft), transparent 360px),
+        linear-gradient(180deg, var(--bg) 0%, var(--surface-soft) 100%);
       color: var(--text);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       line-height: 1.6;
       overflow-x: clip;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(var(--line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--line) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.18;
+      mask-image: linear-gradient(180deg, black, transparent 62%);
     }
 
     a {
       color: var(--accent);
       text-decoration-thickness: 0.08em;
-      text-underline-offset: 0.2em;
+      text-underline-offset: 0.22em;
+    }
+
+    a:hover {
+      color: var(--accent-strong);
     }
 
     a:focus-visible,
     button:focus-visible {
-      outline: 3px solid var(--warn);
+      outline: 3px solid var(--amber);
       outline-offset: 4px;
-      border-radius: 4px;
+      border-radius: 6px;
+    }
+
+    p,
+    ul,
+    ol {
+      margin: 0;
+    }
+
+    p {
+      color: var(--muted);
+    }
+
+    code {
+      padding: 0.12rem 0.32rem;
+      border-radius: 5px;
+      background: var(--code-bg);
+      color: var(--text);
+      font-size: 0.92em;
     }
 
     .skip-link {
       position: fixed;
       top: 12px;
       left: 12px;
-      z-index: 30;
-      transform: translateY(-140%);
+      z-index: 40;
+      transform: translateY(-150%);
       padding: 10px 14px;
       border-radius: 6px;
       background: var(--text);
       color: var(--bg);
+      font-weight: 700;
       text-decoration: none;
       transition: transform 150ms ease;
     }
@@ -103,225 +165,592 @@
       transform: translateY(0);
     }
 
-    header {
-      border-bottom: 1px solid var(--line);
-      background: color-mix(in srgb, var(--bg) 86%, transparent);
+    .topbar {
       position: sticky;
       top: 0;
-      backdrop-filter: blur(10px);
-      z-index: 10;
+      z-index: 20;
+      border-bottom: 1px solid var(--line);
+      background: color-mix(in srgb, var(--bg) 88%, transparent);
+      backdrop-filter: blur(14px);
     }
 
-    nav {
-      width: min(100%, 1120px);
+    .nav {
+      width: min(100% - 32px, var(--max));
       margin: 0 auto;
-      padding: 14px 20px;
+      padding: 12px 0;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      min-width: 0;
-    }
-
-    nav strong {
-      font-size: 0.98rem;
-      overflow-wrap: anywhere;
-    }
-
-    .nav-actions {
-      display: flex;
-      align-items: center;
+      flex-direction: column;
       gap: 12px;
-      flex-wrap: wrap;
     }
 
-    nav ul {
-      margin: 0;
-      padding: 0;
+    .brand-row,
+    .nav-links {
       display: flex;
-      gap: 14px;
-      list-style: none;
-      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
       min-width: 0;
     }
 
-    nav a {
-      color: var(--muted);
+    .brand-row {
+      justify-content: space-between;
+    }
+
+    .brand {
       min-height: 44px;
       display: inline-flex;
       align-items: center;
-      font-size: 0.92rem;
+      gap: 10px;
+      min-width: 0;
+      color: var(--text);
+      font-weight: 750;
       text-decoration: none;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      display: inline-grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--accent);
+      box-shadow: 0 8px 18px rgb(20 32 51 / 0.08);
+    }
+
+    .brand-text {
+      overflow-wrap: anywhere;
+      line-height: 1.15;
     }
 
     .theme-toggle {
       min-height: 44px;
-      padding: 8px 12px;
+      min-width: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       border: 1px solid var(--line);
-      border-radius: 6px;
-      background: var(--panel);
+      border-radius: 8px;
+      background: var(--surface);
       color: var(--text);
       cursor: pointer;
       font: inherit;
-      font-size: 0.9rem;
+      font-weight: 700;
     }
 
-    main {
-      width: min(100%, 1120px);
+    .theme-toggle .theme-icon {
+      font-size: 1.05rem;
+      line-height: 1;
+    }
+
+    .theme-toggle .theme-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .nav-links {
+      flex-wrap: wrap;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    .nav-links a {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 8px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      font-weight: 650;
+      text-decoration: none;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .page {
+      position: relative;
+      width: min(100% - 32px, var(--max));
       margin: 0 auto;
-      padding: 0 20px 56px;
-      min-width: 0;
+      padding: 0 0 56px;
     }
 
     .hero {
-      min-height: 72vh;
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(320px, 0.8fr);
-      gap: 40px;
+      gap: 28px;
+      padding: 38px 0 30px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
       align-items: center;
-      padding: 56px 0 36px;
+      gap: 8px;
+      margin-bottom: 14px;
+      color: var(--accent-strong);
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 28px;
+      height: 2px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      line-height: 1.12;
+      letter-spacing: 0;
+      color: var(--text);
     }
 
     h1 {
-      margin: 0;
-      font-size: clamp(2.4rem, 6vw, 5.2rem);
-      line-height: 1;
-      letter-spacing: 0;
+      max-width: 13ch;
+      font-size: clamp(2.35rem, 13vw, 4.8rem);
       overflow-wrap: anywhere;
       text-wrap: balance;
     }
 
     h2 {
-      margin: 0 0 14px;
-      font-size: 1.55rem;
-      line-height: 1.2;
-      letter-spacing: 0;
+      font-size: clamp(1.45rem, 5vw, 2rem);
+      text-wrap: balance;
     }
 
     h3 {
-      margin: 0 0 8px;
-      font-size: 1.05rem;
-      letter-spacing: 0;
-    }
-
-    p {
-      margin: 0 0 18px;
-      color: var(--muted);
+      font-size: 1rem;
     }
 
     .lead {
-      margin-top: 22px;
-      max-width: 720px;
-      font-size: 1.15rem;
+      max-width: 68ch;
+      margin-top: 18px;
+      font-size: clamp(1rem, 3.8vw, 1.18rem);
     }
 
-    .actions,
-    .links {
+    .hero-actions,
+    .doc-actions {
       display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 28px;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 24px;
     }
 
     .button {
-      min-height: 44px;
+      min-height: 46px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      padding: 10px 16px;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      color: var(--text);
-      background: var(--panel);
-      text-decoration: none;
-      box-shadow: var(--shadow);
+      gap: 9px;
       max-width: 100%;
+      padding: 11px 15px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--text);
+      font-weight: 750;
       text-align: center;
+      text-decoration: none;
+      box-shadow: 0 10px 20px rgb(20 32 51 / 0.08);
       overflow-wrap: anywhere;
     }
 
     .button.primary {
-      background: var(--accent);
       border-color: var(--accent);
+      background: var(--accent);
       color: #ffffff;
     }
 
-    .signal {
+    .button.secondary {
+      color: var(--accent-strong);
+    }
+
+    .evidence-panel,
+    .module-map {
       border: 1px solid var(--line);
-      background: var(--panel);
-      border-radius: 8px;
-      padding: 18px;
+      border-radius: var(--radius);
+      background: color-mix(in srgb, var(--surface) 94%, transparent);
       box-shadow: var(--shadow);
       min-width: 0;
     }
 
-    .signal pre {
-      margin: 0;
-      padding: 16px;
-      max-width: 100%;
-      overflow-x: auto;
-      overflow-y: hidden;
-      border-radius: 6px;
-      background: var(--code);
-      color: var(--text);
-      font-size: 0.9rem;
-      line-height: 1.5;
+    .evidence-panel {
+      padding: 18px;
     }
 
-    section {
+    .panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+      color: var(--text);
+      font-weight: 800;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent-strong);
+      font-size: 0.8rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .proof-list {
+      display: grid;
+      gap: 10px;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    .proof-list li {
+      display: grid;
+      grid-template-columns: 22px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+      color: var(--muted);
+    }
+
+    .proof-list li::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      margin-top: 0.48em;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 5px var(--accent-soft);
+    }
+
+    .section {
       padding: 34px 0;
       border-top: 1px solid var(--line);
     }
 
-    .grid {
+    .section-heading {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 16px;
+      gap: 10px;
+      max-width: 760px;
+      margin-bottom: 20px;
     }
 
-    .item {
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 18px;
-      background: var(--panel);
-      min-width: 0;
+    .section-heading p {
+      font-size: 1rem;
     }
 
-    .item p {
-      margin-bottom: 0;
-    }
-
-    .two {
+    .split {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(280px, 0.85fr);
-      gap: 28px;
+      gap: 22px;
       align-items: start;
     }
 
-    .diagram {
+    .module-map {
       width: 100%;
       height: auto;
-      min-height: 280px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: var(--panel);
-      box-shadow: var(--shadow);
-    }
-
-    code {
-      padding: 2px 5px;
-      border-radius: 4px;
-      background: var(--code);
+      min-height: 260px;
+      padding: 4px;
       color: var(--text);
     }
 
-    footer {
-      width: min(100%, 1120px);
-      margin: 0 auto;
-      padding: 24px 20px 42px;
+    .module-map text {
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .card {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding: 16px;
+    }
+
+    .card p {
+      margin-top: 8px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      margin-bottom: 12px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: var(--surface-soft);
+      color: var(--subtle);
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .tag.teal {
+      background: var(--accent-soft);
+      color: var(--accent-strong);
+    }
+
+    .tag.blue {
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    .tag.amber {
+      background: var(--amber-soft);
+      color: var(--amber);
+    }
+
+    .tag.rose {
+      background: var(--rose-soft);
+      color: var(--rose);
+    }
+
+    .gate-list {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    .gate-list li {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 6px;
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .gate-list strong {
+      color: var(--text);
+    }
+
+    .doc-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .doc-link {
+      display: grid;
+      gap: 8px;
+      min-height: 100%;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .doc-link span {
       color: var(--muted);
+      font-size: 0.94rem;
+      font-weight: 400;
+    }
+
+    .doc-link strong {
+      color: var(--text);
+    }
+
+    .command-block {
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--code-bg);
+      overflow: hidden;
+    }
+
+    .command-block pre {
+      margin: 0;
+      max-width: 100%;
+      overflow-x: auto;
+      padding: 16px;
+      color: var(--text);
+      font-size: 0.88rem;
+      line-height: 1.55;
+    }
+
+    .pipeline {
+      display: grid;
+      gap: 10px;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+      counter-reset: step;
+    }
+
+    .pipeline li {
+      counter-increment: step;
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr);
+      gap: 12px;
+      align-items: start;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .pipeline li::before {
+      content: counter(step);
+      width: 34px;
+      height: 34px;
+      display: inline-grid;
+      place-items: center;
+      border-radius: 8px;
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-weight: 850;
+    }
+
+    .footer {
+      position: relative;
+      width: min(100% - 32px, var(--max));
+      margin: 0 auto;
+      padding: 24px 0 40px;
       border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    @media (min-width: 560px) {
+      .hero-actions,
+      .doc-actions {
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+
+      .button {
+        width: auto;
+      }
+
+      .cards,
+      .doc-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (min-width: 760px) {
+      .nav {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .brand-row {
+        flex: 0 1 300px;
+      }
+
+      .nav-links {
+        justify-content: flex-end;
+      }
+
+      .theme-toggle {
+        order: 3;
+      }
+
+      .hero {
+        min-height: 64vh;
+        grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.72fr);
+        align-items: center;
+        gap: 34px;
+        padding: 58px 0 42px;
+      }
+
+      h1 {
+        font-size: clamp(3.4rem, 7vw, 5.25rem);
+      }
+
+      .section {
+        padding: 50px 0;
+      }
+
+      .split {
+        grid-template-columns: minmax(0, 0.82fr) minmax(320px, 1fr);
+        gap: 34px;
+      }
+
+      .cards {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .doc-grid {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+      }
+
+      .gate-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .pipeline {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (min-width: 1100px) {
+      .hero {
+        gap: 56px;
+      }
+
+      .evidence-panel {
+        padding: 22px;
+      }
+    }
+
+    @media (max-width: 359px) {
+      .nav,
+      .page,
+      .footer {
+        width: min(100% - 24px, var(--max));
+      }
+
+      .brand-mark {
+        width: 32px;
+        height: 32px;
+      }
+
+      .nav-links a {
+        padding-inline: 6px;
+        font-size: 0.86rem;
+      }
+
+      .button {
+        padding-inline: 12px;
+      }
+
+      .card,
+      .doc-link,
+      .gate-list li,
+      .pipeline li,
+      .evidence-panel {
+        padding: 14px;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -333,276 +762,247 @@
         transition: none;
       }
     }
-
-    @media (max-width: 820px) {
-      nav {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .nav-actions {
-        width: 100%;
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .hero,
-      .two,
-      .grid {
-        grid-template-columns: 1fr;
-      }
-
-      .hero {
-        min-height: auto;
-        padding-top: 40px;
-      }
-    }
-
-    @media (max-width: 520px) {
-      nav {
-        padding: 12px 16px;
-        gap: 10px;
-      }
-
-      nav ul {
-        gap: 4px 12px;
-      }
-
-      main {
-        padding: 0 16px 40px;
-      }
-
-      .hero {
-        gap: 22px;
-        padding: 32px 0 24px;
-      }
-
-      h1 {
-        font-size: clamp(2rem, 13vw, 3rem);
-        line-height: 1.05;
-      }
-
-      h2 {
-        font-size: 1.3rem;
-      }
-
-      .lead {
-        margin-top: 18px;
-        font-size: 1rem;
-      }
-
-      .actions,
-      .links {
-        margin-top: 22px;
-        gap: 10px;
-      }
-
-      .actions .button,
-      .links .button {
-        width: 100%;
-      }
-
-      .signal {
-        padding: 12px;
-      }
-
-      .signal pre {
-        padding: 12px;
-        font-size: 0.82rem;
-      }
-
-      section {
-        padding: 26px 0;
-      }
-
-      .grid {
-        gap: 12px;
-      }
-
-      .item {
-        padding: 15px;
-      }
-
-      .diagram {
-        min-height: 220px;
-      }
-
-      footer {
-        padding: 20px 16px 34px;
-      }
-    }
   </style>
   <script>
     (function () {
-      var storedTheme = localStorage.getItem("spring-modulith-order-platform-theme");
-      if (storedTheme === "light" || storedTheme === "dark") {
-        document.documentElement.dataset.theme = storedTheme;
+      var key = "spring-modulith-order-platform-theme";
+      try {
+        var storedTheme = localStorage.getItem(key);
+        if (storedTheme === "light" || storedTheme === "dark") {
+          document.documentElement.dataset.theme = storedTheme;
+        }
+      } catch (error) {
+        document.documentElement.removeAttribute("data-theme");
       }
     }());
   </script>
 </head>
 <body>
   <a class="skip-link" href="#content">Skip to content</a>
-  <header>
-    <nav aria-label="Primary navigation">
-      <strong>Spring Modulith Order Platform</strong>
-      <div class="nav-actions">
-        <ul>
-          <li><a href="#architecture">Architecture</a></li>
-          <li><a href="#modules">Modules</a></li>
-          <li><a href="#docs">Generated docs</a></li>
-          <li><a href="#quality">Quality gates</a></li>
-          <li><a href="#local">Local development</a></li>
-        </ul>
-        <button class="theme-toggle" type="button" data-theme-toggle aria-pressed="false">Dark mode</button>
+
+  <header class="topbar">
+    <nav class="nav" aria-label="Primary navigation">
+      <div class="brand-row">
+        <a class="brand" href="#content" aria-label="Spring Modulith Order Platform home">
+          <span class="brand-mark" aria-hidden="true">SM</span>
+          <span class="brand-text">Spring Modulith Order Platform</span>
+        </a>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-pressed="false" aria-label="Switch color theme">
+          <span class="theme-icon" aria-hidden="true">D</span>
+          <span class="theme-label">Switch color theme</span>
+        </button>
       </div>
+      <ul class="nav-links">
+        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#boundaries">Boundaries</a></li>
+        <li><a href="#quality">Quality</a></li>
+        <li><a href="#docs">Docs</a></li>
+        <li><a href="#local">Local</a></li>
+        <li><a href="#ci">CI/CD</a></li>
+      </ul>
     </nav>
   </header>
 
-  <main id="content">
+  <main class="page" id="content">
     <section class="hero" aria-labelledby="hero-title">
       <div>
+        <span class="eyebrow">Senior backend portfolio</span>
         <h1 id="hero-title">Spring Modulith Order Platform</h1>
-        <p class="lead">A production-oriented modular monolith for order management, built with Java 21, Spring Boot 4, Spring Modulith, PostgreSQL, Flyway, OpenAPI-first contracts and Testcontainers.</p>
-        <div class="actions" aria-label="Project and generated documentation links">
-          <a class="button primary" href="openapi/">OpenAPI docs</a>
-          <a class="button" href="jacoco/">Coverage report</a>
-          <a class="button" href="javadoc/">Javadoc</a>
-          <a class="button" href="openapi/openapi.json">OpenAPI JSON</a>
-          <a class="button" href="https://github.com/DanieleMasone/spring-modulith-order-platform">GitHub repository</a>
+        <p class="lead">A production-oriented modular monolith for order management. It demonstrates Spring Modulith boundaries, contract-first REST APIs, PostgreSQL persistence, domain events, architecture tests and generated documentation without distributed-system theater.</p>
+        <div class="hero-actions" aria-label="Primary project links">
+          <a class="button primary" href="openapi/">OpenAPI Documentation</a>
+          <a class="button" href="https://github.com/DanieleMasone/spring-modulith-order-platform">GitHub Repository</a>
+          <a class="button secondary" href="#docs">Generated Reports</a>
         </div>
       </div>
-      <div class="signal" aria-label="Module dependency summary">
-        <pre><code>orders
-  uses customers :: api
-  uses pricing :: api
-  publishes OrderCreatedEvent
 
-payments
-  listens to OrderCreatedEvent
-  publishes PaymentAuthorizedEvent
-
-notifications
-  listens to order and payment events</code></pre>
-      </div>
+      <aside class="evidence-panel" aria-labelledby="evidence-title">
+        <div class="panel-title">
+          <span id="evidence-title">Build evidence</span>
+          <span class="status-pill">Maven verified</span>
+        </div>
+        <ul class="proof-list">
+          <li>One Spring Boot 4 deployable, governed by Spring Modulith.</li>
+          <li>OpenAPI interfaces and DTOs generated during Maven build.</li>
+          <li>Integration tests run with Testcontainers and PostgreSQL.</li>
+          <li>JaCoCo, Javadoc, OpenAPI and Pages artifacts are checked in verify.</li>
+        </ul>
+      </aside>
     </section>
 
-    <section id="architecture" aria-labelledby="architecture-title">
-      <div class="two">
-        <div>
-          <h2 id="architecture-title">Architecture</h2>
-          <p>The service is intentionally a modular monolith: one deployment unit, strong transaction boundaries and explicit module contracts. Spring Modulith verifies that module dependencies remain acyclic and only target exposed API packages.</p>
-          <p>Generated OpenAPI types are outside the business modules and excluded from Modulith verification so generated code does not become an architectural module.</p>
+    <section class="section" id="architecture" aria-labelledby="architecture-title">
+      <div class="split">
+        <div class="section-heading">
+          <span class="eyebrow">Architecture</span>
+          <h2 id="architecture-title">A modular monolith with explicit seams.</h2>
+          <p>The application keeps one deployment unit and uses Spring Modulith to make module relationships visible and enforceable. Cross-module collaboration goes through named API packages or domain events.</p>
+          <p>Inside each module, the project follows a pragmatic ports-and-adapters style: domain logic stays framework-independent, application services orchestrate use cases, and infrastructure contains persistence adapters.</p>
         </div>
-        <svg class="diagram" viewBox="0 0 460 300" role="img" aria-labelledby="diagram-title diagram-desc">
-          <title id="diagram-title">Application module relationship diagram</title>
-          <desc id="diagram-desc">Orders depends on customer and pricing APIs. Payments and notifications react to domain events.</desc>
+
+        <svg class="module-map" viewBox="0 0 560 360" role="img" aria-labelledby="map-title map-desc">
+          <title id="map-title">Spring Modulith module dependency map</title>
+          <desc id="map-desc">Orders uses customer and pricing APIs. Payments and notifications react to events emitted by orders and payments.</desc>
           <defs>
-            <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
               <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"></path>
             </marker>
           </defs>
-          <g fill="none" stroke="currentColor" stroke-width="2" opacity="0.85" marker-end="url(#arrow)">
-            <path d="M 220 95 L 96 165"></path>
-            <path d="M 220 95 L 340 165"></path>
-            <path d="M 220 125 L 220 190"></path>
-            <path d="M 245 210 L 340 210"></path>
+          <g fill="none" stroke="currentColor" stroke-width="2.5" opacity="0.75" marker-end="url(#arrow)">
+            <path d="M 280 105 L 146 178"></path>
+            <path d="M 280 105 L 414 178"></path>
+            <path d="M 280 136 L 280 210"></path>
+            <path d="M 320 246 L 414 278"></path>
           </g>
-          <g font-family="system-ui, sans-serif" font-size="15" text-anchor="middle">
-            <rect x="160" y="38" width="120" height="58" rx="8" fill="var(--accent)" opacity="0.95"></rect>
-            <text x="220" y="73" fill="#ffffff">orders</text>
-            <rect x="36" y="166" width="128" height="58" rx="8" fill="var(--panel)" stroke="var(--line)"></rect>
-            <text x="100" y="201" fill="var(--text)">customers</text>
-            <rect x="296" y="166" width="128" height="58" rx="8" fill="var(--panel)" stroke="var(--line)"></rect>
-            <text x="360" y="201" fill="var(--text)">pricing</text>
-            <rect x="158" y="206" width="124" height="58" rx="8" fill="var(--warn)" opacity="0.95"></rect>
-            <text x="220" y="241" fill="#111827">payments</text>
-            <rect x="296" y="236" width="128" height="48" rx="8" fill="var(--rose)" opacity="0.95"></rect>
-            <text x="360" y="265" fill="#ffffff">notifications</text>
+          <g font-size="16" text-anchor="middle">
+            <rect x="206" y="54" width="148" height="64" rx="8" fill="var(--accent)"></rect>
+            <text x="280" y="92" fill="#ffffff" font-weight="800">orders</text>
+
+            <rect x="58" y="170" width="148" height="64" rx="8" fill="var(--surface)" stroke="var(--line)"></rect>
+            <text x="132" y="198" fill="var(--text)" font-weight="800">customers</text>
+            <text x="132" y="219" fill="var(--muted)" font-size="12">named API</text>
+
+            <rect x="354" y="170" width="148" height="64" rx="8" fill="var(--surface)" stroke="var(--line)"></rect>
+            <text x="428" y="198" fill="var(--text)" font-weight="800">pricing</text>
+            <text x="428" y="219" fill="var(--muted)" font-size="12">named API</text>
+
+            <rect x="206" y="224" width="148" height="64" rx="8" fill="var(--blue)"></rect>
+            <text x="280" y="252" fill="#ffffff" font-weight="800">payments</text>
+            <text x="280" y="273" fill="#ffffff" font-size="12">order event</text>
+
+            <rect x="354" y="268" width="148" height="56" rx="8" fill="var(--rose)"></rect>
+            <text x="428" y="301" fill="#ffffff" font-weight="800">notifications</text>
           </g>
         </svg>
       </div>
     </section>
 
-    <section id="modules" aria-labelledby="modules-title">
-      <h2 id="modules-title">Modules</h2>
-      <div class="grid">
-        <article class="item">
+    <section class="section" id="boundaries" aria-labelledby="boundaries-title">
+      <div class="section-heading">
+        <span class="eyebrow">Module boundaries</span>
+        <h2 id="boundaries-title">Small public APIs, private implementation details.</h2>
+        <p>Each module owns a narrow business capability. JPA entities stay in infrastructure packages, while public module APIs expose intentional records and interfaces.</p>
+      </div>
+      <div class="cards">
+        <article class="card">
+          <span class="tag teal">identity</span>
           <h3>Customers</h3>
-          <p>Owns customer identity and exposes a small lookup API for order validation.</p>
+          <p>Registers customers and exposes customer lookup for order validation.</p>
         </article>
-        <article class="item">
+        <article class="card">
+          <span class="tag blue">catalog</span>
           <h3>Pricing</h3>
-          <p>Owns catalog prices and creates deterministic quotes from product requests.</p>
+          <p>Reads active catalog prices and calculates deterministic quotes.</p>
         </article>
-        <article class="item">
+        <article class="card">
+          <span class="tag amber">workflow</span>
           <h3>Orders</h3>
-          <p>Coordinates customer validation, pricing, order persistence and order creation events.</p>
+          <p>Coordinates customer validation, pricing, persistence and order events.</p>
         </article>
-        <article class="item">
+        <article class="card">
+          <span class="tag rose">state</span>
           <h3>Payments</h3>
-          <p>Prepares payment records after orders are committed and authorizes matching amounts.</p>
+          <p>Prepares pending payments after order commit and authorizes matching amounts.</p>
         </article>
-        <article class="item">
+        <article class="card">
+          <span class="tag">events</span>
           <h3>Notifications</h3>
           <p>Records notification intents created from order and payment events.</p>
         </article>
-        <article class="item">
+        <article class="card">
+          <span class="tag">contract</span>
           <h3>Generated API</h3>
-          <p>OpenAPI interfaces and DTOs are generated during the Maven build.</p>
+          <p>Generated REST interfaces and DTOs stay at the API boundary.</p>
         </article>
       </div>
     </section>
 
-    <section id="quality" aria-labelledby="quality-title">
-      <h2 id="quality-title">Quality Gates</h2>
-      <div class="grid">
-        <article class="item">
-          <h3>Architecture governance</h3>
-          <p><code>ApplicationModules.verify()</code> fails the build when module boundaries are violated.</p>
-        </article>
-        <article class="item">
-          <h3>Real persistence</h3>
-          <p>Flyway owns schema changes and integration tests run against PostgreSQL with Testcontainers.</p>
-        </article>
-        <article class="item">
-          <h3>Problem details</h3>
-          <p>REST errors use RFC7807 for validation failures, business rules and missing resources.</p>
-        </article>
-        <article class="item">
-          <h3>Generated artifacts</h3>
-          <p>Maven fails verification when coverage, OpenAPI, Javadoc or Pages outputs are missing.</p>
-        </article>
+    <section class="section" id="quality" aria-labelledby="quality-title">
+      <div class="section-heading">
+        <span class="eyebrow">Quality gates</span>
+        <h2 id="quality-title">Verification is part of the build, not a checklist in prose.</h2>
+        <p>The repository favors behavior-focused tests and build-time artifact checks over decorative coverage targets.</p>
+      </div>
+      <ul class="gate-list">
+        <li>
+          <strong>Architecture tests</strong>
+          <span><code>ApplicationModules.verify()</code> validates Spring Modulith boundaries, and ArchUnit guards domain and application dependencies.</span>
+        </li>
+        <li>
+          <strong>REST integration tests</strong>
+          <span>Happy paths, validation failures, not-found responses, business rules, persistence and event side effects run against PostgreSQL.</span>
+        </li>
+        <li>
+          <strong>Generated documentation</strong>
+          <span>Maven produces and verifies JaCoCo, Javadoc, OpenAPI HTML, OpenAPI JSON and the Pages artifact.</span>
+        </li>
+        <li>
+          <strong>Deployment checks</strong>
+          <span>CI validates Docker Compose and builds the Docker image after tests pass.</span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="section" id="docs" aria-labelledby="docs-title">
+      <div class="section-heading">
+        <span class="eyebrow">Generated documentation</span>
+        <h2 id="docs-title">Published Pages are assembled from Maven outputs.</h2>
+        <p>The committed source remains <code>src/site/index.html</code>. Generated reports are copied into <code>target/pages</code> during Maven verify and then published by GitHub Pages.</p>
+      </div>
+      <div class="doc-grid">
+        <a class="doc-link" href="openapi/">
+          <strong>OpenAPI Documentation</strong>
+          <span>HTML contract reference generated from the OpenAPI source.</span>
+        </a>
+        <a class="doc-link" href="openapi/openapi.json">
+          <strong>OpenAPI JSON</strong>
+          <span>The published machine-readable REST contract.</span>
+        </a>
+        <a class="doc-link" href="javadoc/">
+          <strong>Javadoc</strong>
+          <span>Public API and domain documentation generated by Maven.</span>
+        </a>
+        <a class="doc-link" href="jacoco/">
+          <strong>JaCoCo Coverage</strong>
+          <span>Coverage report for non-generated project code.</span>
+        </a>
+        <a class="doc-link" href="https://github.com/DanieleMasone/spring-modulith-order-platform">
+          <strong>GitHub Repository</strong>
+          <span>Source, CI workflow, Dockerfile and documentation.</span>
+        </a>
       </div>
     </section>
 
-    <section id="docs" aria-labelledby="docs-title">
-      <h2 id="docs-title">Generated Documentation</h2>
-      <p>The Pages artifact is assembled from build outputs only. No generated report, OpenAPI page or Javadoc page is committed to the repository.</p>
-      <div class="links">
-        <a class="button" href="openapi/">OpenAPI HTML</a>
-        <a class="button" href="openapi/openapi.json">OpenAPI JSON</a>
-        <a class="button" href="jacoco/">JaCoCo report</a>
-        <a class="button" href="javadoc/">Javadoc</a>
-        <a class="button" href="https://github.com/DanieleMasone/spring-modulith-order-platform">GitHub repository</a>
+    <section class="section" id="local" aria-labelledby="local-title">
+      <div class="section-heading">
+        <span class="eyebrow">Local development</span>
+        <h2 id="local-title">Run the same verification path locally.</h2>
+        <p>PostgreSQL is the development and test database. H2 is intentionally excluded so schema behavior stays realistic.</p>
+      </div>
+      <div class="command-block" aria-label="Local development commands">
+        <pre><code>docker compose up -d
+./mvnw clean verify
+./mvnw spring-boot:run</code></pre>
       </div>
     </section>
 
-    <section id="local" aria-labelledby="local-title">
-      <h2 id="local-title">Local Development</h2>
-      <p>Start PostgreSQL with <code>docker compose up -d</code>, run verification with <code>./mvnw clean verify</code>, then start the app with <code>./mvnw spring-boot:run</code>.</p>
+    <section class="section" id="ci" aria-labelledby="ci-title">
+      <div class="section-heading">
+        <span class="eyebrow">CI/CD</span>
+        <h2 id="ci-title">One Maven verification, then publish only generated Pages.</h2>
+        <p>The workflow keeps CI direct: no matrix builds, no duplicated Maven runs, and no generated reports committed to Git.</p>
+      </div>
+      <ol class="pipeline">
+        <li>Set up Java 21 and run <code>./mvnw -B -ntp clean verify</code>.</li>
+        <li>Check generated coverage, Javadoc, OpenAPI and Pages outputs.</li>
+        <li>Validate Docker Compose, build the image and deploy <code>target/pages</code>.</li>
+      </ol>
     </section>
-
-    <section id="ci" aria-labelledby="ci-title">
-      <h2 id="ci-title">CI/CD</h2>
-      <p>The pipeline checks out the repository, sets up Java 21, runs one Maven verification, validates generated artifacts, validates Docker Compose, builds the Docker image and publishes <code>target/pages</code>.</p>
-    </section>
-
   </main>
 
-  <footer>
-    <span>Generated by Maven from <code>src/site/index.html</code>.</span>
+  <footer class="footer">
+    Generated by Maven from <code>src/site/index.html</code>. Reports under <code>target/pages</code> are build artifacts.
   </footer>
+
   <script>
     (function () {
       var key = "spring-modulith-order-platform-theme";
@@ -610,25 +1010,48 @@ notifications
       var toggle = document.querySelector("[data-theme-toggle]");
       var prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
 
+      if (!toggle) {
+        return;
+      }
+
+      function storedTheme() {
+        try {
+          return localStorage.getItem(key);
+        } catch (error) {
+          return null;
+        }
+      }
+
+      function setStoredTheme(theme) {
+        try {
+          localStorage.setItem(key, theme);
+        } catch (error) {
+          return;
+        }
+      }
+
       function activeTheme() {
         return root.dataset.theme || (prefersDark.matches ? "dark" : "light");
       }
 
       function updateToggle() {
         var theme = activeTheme();
+        var nextTheme = theme === "dark" ? "light" : "dark";
         toggle.setAttribute("aria-pressed", String(theme === "dark"));
-        toggle.textContent = theme === "dark" ? "Light mode" : "Dark mode";
+        toggle.setAttribute("aria-label", "Switch to " + nextTheme + " mode");
+        toggle.querySelector(".theme-icon").textContent = theme === "dark" ? "L" : "D";
+        toggle.querySelector(".theme-label").textContent = "Switch to " + nextTheme + " mode";
       }
 
       toggle.addEventListener("click", function () {
         var nextTheme = activeTheme() === "dark" ? "light" : "dark";
         root.dataset.theme = nextTheme;
-        localStorage.setItem(key, nextTheme);
+        setStoredTheme(nextTheme);
         updateToggle();
       });
 
       prefersDark.addEventListener("change", function () {
-        if (!root.dataset.theme) {
+        if (!storedTheme()) {
           updateToggle();
         }
       });
