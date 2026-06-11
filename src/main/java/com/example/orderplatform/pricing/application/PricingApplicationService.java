@@ -8,8 +8,6 @@ import com.example.orderplatform.pricing.api.PricingQuote;
 import com.example.orderplatform.pricing.api.PricingRequest;
 import com.example.orderplatform.pricing.api.PricingService;
 import com.example.orderplatform.pricing.domain.CatalogCurrencyPolicy;
-import com.example.orderplatform.pricing.infrastructure.PriceCatalogItemEntity;
-import com.example.orderplatform.pricing.infrastructure.PriceCatalogRepository;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,9 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class PricingApplicationService implements PricingService {
 
-    private final PriceCatalogRepository catalog;
+    private final PriceCatalog catalog;
 
-    public PricingApplicationService(PriceCatalogRepository catalog) {
+    public PricingApplicationService(PriceCatalog catalog) {
         this.catalog = catalog;
     }
 
@@ -59,11 +57,13 @@ public class PricingApplicationService implements PricingService {
             throw new BusinessRuleViolationException("Quantity must be greater than zero.");
         }
 
-        PriceCatalogItemEntity item = catalog.findById(request.productCode())
-                .filter(PriceCatalogItemEntity::active)
+        CatalogPrice item = catalog.findActivePrice(request.productCode())
                 .orElseThrow(() -> new ResourceNotFoundException("Product " + request.productCode() + " was not found."));
 
-        Money unitPrice = Money.of(item.unitAmount(), item.currency());
-        return new PricedLine(request.productCode(), request.quantity(), unitPrice, unitPrice.multiply(request.quantity()));
+        return new PricedLine(
+                item.productCode(),
+                request.quantity(),
+                item.unitPrice(),
+                item.unitPrice().multiply(request.quantity()));
     }
 }

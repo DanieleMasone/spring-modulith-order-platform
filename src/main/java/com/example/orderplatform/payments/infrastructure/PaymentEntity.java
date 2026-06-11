@@ -1,7 +1,6 @@
 package com.example.orderplatform.payments.infrastructure;
 
-import com.example.orderplatform.BusinessRuleViolationException;
-import com.example.orderplatform.Money;
+import com.example.orderplatform.payments.domain.Payment;
 import com.example.orderplatform.payments.domain.PaymentStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -44,16 +43,25 @@ public class PaymentEntity {
         this.createdAt = createdAt;
     }
 
-    public static PaymentEntity pending(UUID id, UUID orderId, Money amount, OffsetDateTime createdAt) {
-        return new PaymentEntity(id, orderId, PaymentStatus.PENDING, amount.amount(), amount.currency(), createdAt);
+    static PaymentEntity from(Payment payment) {
+        PaymentEntity entity = new PaymentEntity(
+                payment.id(),
+                payment.orderId(),
+                payment.status(),
+                payment.amount().amount(),
+                payment.amount().currency(),
+                payment.createdAt());
+        entity.authorizedAt = payment.authorizedAt();
+        return entity;
     }
 
-    public void authorize(OffsetDateTime authorizedAt) {
-        if (status != PaymentStatus.PENDING) {
-            throw new BusinessRuleViolationException("Only pending payments can be authorized.");
-        }
-        this.status = PaymentStatus.AUTHORIZED;
-        this.authorizedAt = authorizedAt;
+    void updateFrom(Payment payment) {
+        this.orderId = payment.orderId();
+        this.status = payment.status();
+        this.amount = payment.amount().amount();
+        this.currency = payment.amount().currency();
+        this.createdAt = payment.createdAt();
+        this.authorizedAt = payment.authorizedAt();
     }
 
     public UUID id() {

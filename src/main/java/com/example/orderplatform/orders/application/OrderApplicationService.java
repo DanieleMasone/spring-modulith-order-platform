@@ -1,18 +1,13 @@
 package com.example.orderplatform.orders.application;
 
-import com.example.orderplatform.Money;
 import com.example.orderplatform.ResourceNotFoundException;
 import com.example.orderplatform.customers.api.CustomerDirectory;
 import com.example.orderplatform.orders.api.OrderCommand;
 import com.example.orderplatform.orders.api.OrderCreatedEvent;
-import com.example.orderplatform.orders.api.OrderLineSummary;
 import com.example.orderplatform.orders.api.OrderManagement;
 import com.example.orderplatform.orders.api.OrderSummary;
 import com.example.orderplatform.orders.domain.OrderDraft;
 import com.example.orderplatform.orders.domain.OrderLineDraft;
-import com.example.orderplatform.orders.infrastructure.OrderEntity;
-import com.example.orderplatform.orders.infrastructure.OrderLineEntity;
-import com.example.orderplatform.orders.infrastructure.OrderRepository;
 import com.example.orderplatform.pricing.api.PricedLine;
 import com.example.orderplatform.pricing.api.PricingRequest;
 import com.example.orderplatform.pricing.api.PricingService;
@@ -32,13 +27,13 @@ public class OrderApplicationService implements OrderManagement {
 
     private final CustomerDirectory customers;
     private final PricingService pricing;
-    private final OrderRepository orders;
+    private final OrderStore orders;
     private final ApplicationEventPublisher events;
 
     public OrderApplicationService(
             CustomerDirectory customers,
             PricingService pricing,
-            OrderRepository orders,
+            OrderStore orders,
             ApplicationEventPublisher events) {
         this.customers = customers;
         this.pricing = pricing;
@@ -67,8 +62,7 @@ public class OrderApplicationService implements OrderManagement {
                         .map(line -> new OrderLineDraft(line.productCode(), line.quantity(), line.unitPrice()))
                         .toList());
 
-        OrderEntity order = orders.save(OrderEntity.from(UUID.randomUUID(), draft, OffsetDateTime.now()));
-        OrderSummary summary = toSummary(order);
+        OrderSummary summary = orders.save(UUID.randomUUID(), draft, OffsetDateTime.now());
 
         events.publishEvent(new OrderCreatedEvent(
                 summary.id(),
@@ -91,25 +85,6 @@ public class OrderApplicationService implements OrderManagement {
     @Transactional(readOnly = true)
     public OrderSummary getOrder(UUID orderId) {
         return orders.findById(orderId)
-                .map(this::toSummary)
                 .orElseThrow(() -> new ResourceNotFoundException("Order " + orderId + " was not found."));
-    }
-
-    private OrderSummary toSummary(OrderEntity order) {
-        List<OrderLineSummary> lines = order.lines().stream()
-                .map(this::toLineSummary)
-                .toList();
-        return new OrderSummary(
-                order.id(),
-                order.customerId(),
-                order.status().name(),
-                Money.of(order.totalAmount(), order.currency()),
-                lines,
-                order.createdAt());
-    }
-
-    private OrderLineSummary toLineSummary(OrderLineEntity line) {
-        Money unitPrice = Money.of(line.unitAmount(), line.currency());
-        return new OrderLineSummary(line.productCode(), line.quantity(), unitPrice, unitPrice.multiply(line.quantity()));
     }
 }

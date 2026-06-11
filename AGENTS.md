@@ -9,6 +9,8 @@ Build and maintain a production-oriented modular monolith order management platf
 * The application is a single Spring Boot 4 deployable governed by Spring Modulith.
 * Business modules are direct packages below `com.example.orderplatform`: `customers`, `pricing`, `orders`, `payments`, `notifications`.
 * Each module may use `api`, `application`, `domain` and `infrastructure` packages. Do not add layers unless they remove real complexity.
+* Use a pragmatic ports-and-adapters style inside those packages: domain logic remains framework-independent, application services orchestrate use cases, and infrastructure adapters contain persistence and technical integrations.
+* Introduce outbound ports only for meaningful technical boundaries, such as keeping Spring Data repositories and JPA entities out of application services. Do not add cosmetic `ports` or `adapters` package trees.
 * Cross-module references must go through named API interfaces or domain events.
 * Module dependency rules live in module-level `package-info.java` files and must remain enforceable by `ApplicationModules.verify()`.
 * Domain events are used for meaningful collaboration after state changes. Do not create decorative event chains.

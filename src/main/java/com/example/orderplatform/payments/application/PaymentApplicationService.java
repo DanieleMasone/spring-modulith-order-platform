@@ -7,8 +7,7 @@ import com.example.orderplatform.orders.api.OrderCreatedEvent;
 import com.example.orderplatform.payments.api.PaymentAuthorizedEvent;
 import com.example.orderplatform.payments.api.PaymentManagement;
 import com.example.orderplatform.payments.api.PaymentSummary;
-import com.example.orderplatform.payments.infrastructure.PaymentEntity;
-import com.example.orderplatform.payments.infrastructure.PaymentRepository;
+import com.example.orderplatform.payments.domain.Payment;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,10 +25,10 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @Transactional
 public class PaymentApplicationService implements PaymentManagement {
 
-    private final PaymentRepository payments;
+    private final PaymentStore payments;
     private final ApplicationEventPublisher events;
 
-    public PaymentApplicationService(PaymentRepository payments, ApplicationEventPublisher events) {
+    public PaymentApplicationService(PaymentStore payments, ApplicationEventPublisher events) {
         this.payments = payments;
         this.events = events;
     }
@@ -45,7 +44,7 @@ public class PaymentApplicationService implements PaymentManagement {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void preparePayment(OrderCreatedEvent event) {
-        payments.findByOrderId(event.orderId()).orElseGet(() -> payments.save(PaymentEntity.pending(
+        payments.findByOrderId(event.orderId()).orElseGet(() -> payments.save(Payment.pending(
                 UUID.randomUUID(),
                 event.orderId(),
                 Money.of(event.totalAmount(), event.currency()),
@@ -61,15 +60,14 @@ public class PaymentApplicationService implements PaymentManagement {
      */
     @Override
     public PaymentSummary authorize(UUID orderId, Money amount) {
-        PaymentEntity payment = payments.findByOrderId(orderId)
+        Payment payment = payments.findByOrderId(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Payment for order " + orderId + " was not found."));
 
-        if (!payment.amount().equals(amount.amount()) || !payment.currency().equals(amount.currency())) {
+        if (!payment.amount().equals(amount)) {
             throw new BusinessRuleViolationException("Payment amount must match the submitted order total.");
         }
 
-        payment.authorize(OffsetDateTime.now());
-        PaymentSummary summary = toSummary(payment);
+        PaymentSummary summary = toSummary(payments.save(payment.authorize(OffsetDateTime.now())));
         events.publishEvent(new PaymentAuthorizedEvent(
                 summary.id(),
                 summary.orderId(),
@@ -106,12 +104,12 @@ public class PaymentApplicationService implements PaymentManagement {
         return payments.findByOrderId(orderId).map(this::toSummary);
     }
 
-    private PaymentSummary toSummary(PaymentEntity payment) {
+    private PaymentSummary toSummary(Payment payment) {
         return new PaymentSummary(
                 payment.id(),
                 payment.orderId(),
                 payment.status().name(),
-                Money.of(payment.amount(), payment.currency()),
+                payment.amount(),
                 payment.createdAt(),
                 payment.authorizedAt());
     }

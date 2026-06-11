@@ -36,6 +36,8 @@ module
 
 The `api` package is the public module surface. Spring Modulith `@NamedInterface("api")` annotations make those surfaces explicit, and module-level `@ApplicationModule(allowedDependencies = ...)` declarations keep dependencies intentional. `ApplicationModules.of(OrderPlatformApplication.class).verify()` is part of the test suite, so illegal cross-module dependencies fail the build.
 
+The project follows a pragmatic ports-and-adapters style inside each Spring Modulith module: domain logic remains framework-independent, application services orchestrate use cases, and infrastructure adapters contain persistence and technical integrations. Outbound ports are introduced only where they keep Spring Data and JPA entities out of application services; the package layout remains `api`, `application`, `domain` and `infrastructure` instead of adding cosmetic `ports` or `adapters` folders.
+
 ## Module Collaboration
 
 Orders uses synchronous module API dependencies where immediate consistency is required:

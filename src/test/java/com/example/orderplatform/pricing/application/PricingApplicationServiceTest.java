@@ -5,12 +5,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 import com.example.orderplatform.BusinessRuleViolationException;
+import com.example.orderplatform.Money;
 import com.example.orderplatform.ResourceNotFoundException;
 import com.example.orderplatform.pricing.api.PricingRequest;
-import com.example.orderplatform.pricing.infrastructure.PriceCatalogItemEntity;
-import com.example.orderplatform.pricing.infrastructure.PriceCatalogRepository;
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -22,14 +20,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class PricingApplicationServiceTest {
 
     @Mock
-    PriceCatalogRepository catalog;
+    PriceCatalog catalog;
 
     @Test
     void calculatesQuoteFromActiveCatalogItems() {
-        when(catalog.findById("SKU-COFFEE-MUG"))
-                .thenReturn(Optional.of(catalogItem("SKU-COFFEE-MUG", "14.99", true)));
-        when(catalog.findById("SKU-NOTEBOOK"))
-                .thenReturn(Optional.of(catalogItem("SKU-NOTEBOOK", "19.99", true)));
+        when(catalog.findActivePrice("SKU-COFFEE-MUG"))
+                .thenReturn(Optional.of(catalogItem("SKU-COFFEE-MUG", "14.99")));
+        when(catalog.findActivePrice("SKU-NOTEBOOK"))
+                .thenReturn(Optional.of(catalogItem("SKU-NOTEBOOK", "19.99")));
 
         var service = new PricingApplicationService(catalog);
         var quote = service.quoteFor(List.of(
@@ -52,7 +50,7 @@ class PricingApplicationServiceTest {
 
     @Test
     void rejectsMissingProducts() {
-        when(catalog.findById("SKU-MISSING")).thenReturn(Optional.empty());
+        when(catalog.findActivePrice("SKU-MISSING")).thenReturn(Optional.empty());
 
         var service = new PricingApplicationService(catalog);
 
@@ -62,9 +60,8 @@ class PricingApplicationServiceTest {
     }
 
     @Test
-    void rejectsInactiveProducts() {
-        when(catalog.findById("SKU-INACTIVE"))
-                .thenReturn(Optional.of(catalogItem("SKU-INACTIVE", "12.00", false)));
+    void treatsInactiveProductsAsUnavailable() {
+        when(catalog.findActivePrice("SKU-INACTIVE")).thenReturn(Optional.empty());
 
         var service = new PricingApplicationService(catalog);
 
@@ -73,13 +70,7 @@ class PricingApplicationServiceTest {
                 .hasMessageContaining("SKU-INACTIVE");
     }
 
-    private PriceCatalogItemEntity catalogItem(String productCode, String unitAmount, boolean active) {
-        return new PriceCatalogItemEntity(
-                productCode,
-                productCode,
-                new BigDecimal(unitAmount),
-                "EUR",
-                active,
-                OffsetDateTime.now());
+    private CatalogPrice catalogItem(String productCode, String unitAmount) {
+        return new CatalogPrice(productCode, Money.of(new BigDecimal(unitAmount), "EUR"));
     }
 }

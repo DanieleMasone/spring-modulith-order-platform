@@ -3,13 +3,14 @@ package com.example.orderplatform.customers.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.example.orderplatform.ResourceConflictException;
+import com.example.orderplatform.customers.api.CustomerSnapshot;
+import com.example.orderplatform.customers.domain.CustomerRegistration;
 import com.example.orderplatform.customers.domain.CustomerStatus;
-import com.example.orderplatform.customers.infrastructure.CustomerEntity;
-import com.example.orderplatform.customers.infrastructure.CustomerRepository;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,12 +24,20 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class CustomerApplicationServiceTest {
 
     @Mock
-    CustomerRepository customers;
+    CustomerStore customers;
 
     @Test
     void createsActiveCustomerThroughModuleApi() {
         when(customers.findByEmail("ada@example.com")).thenReturn(Optional.empty());
-        when(customers.save(any(CustomerEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(customers.saveNew(any(UUID.class), any(CustomerRegistration.class), eq(CustomerStatus.ACTIVE), any(OffsetDateTime.class)))
+                .thenAnswer(invocation -> {
+                    CustomerRegistration registration = invocation.getArgument(1);
+                    return new CustomerSnapshot(
+                            invocation.getArgument(0),
+                            registration.email(),
+                            registration.fullName(),
+                            invocation.<CustomerStatus>getArgument(2).name());
+                });
 
         var service = new CustomerApplicationService(customers);
         var customer = service.createCustomer(" Ada Lovelace ", " ADA@EXAMPLE.COM ");
@@ -37,19 +46,18 @@ class CustomerApplicationServiceTest {
         assertThat(customer.fullName()).isEqualTo("Ada Lovelace");
         assertThat(customer.status()).isEqualTo("ACTIVE");
 
-        ArgumentCaptor<CustomerEntity> savedCustomer = ArgumentCaptor.forClass(CustomerEntity.class);
-        verify(customers).save(savedCustomer.capture());
-        assertThat(savedCustomer.getValue().status()).isEqualTo(CustomerStatus.ACTIVE);
+        ArgumentCaptor<CustomerRegistration> savedRegistration = ArgumentCaptor.forClass(CustomerRegistration.class);
+        verify(customers).saveNew(any(UUID.class), savedRegistration.capture(), eq(CustomerStatus.ACTIVE), any(OffsetDateTime.class));
+        assertThat(savedRegistration.getValue().email()).isEqualTo("ada@example.com");
     }
 
     @Test
     void rejectsDuplicateEmailThroughConflictException() {
-        var existing = new CustomerEntity(
+        var existing = new CustomerSnapshot(
                 UUID.randomUUID(),
                 "ada@example.com",
                 "Ada Lovelace",
-                CustomerStatus.ACTIVE,
-                OffsetDateTime.now());
+                CustomerStatus.ACTIVE.name());
         when(customers.findByEmail("ada@example.com")).thenReturn(Optional.of(existing));
 
         var service = new CustomerApplicationService(customers);
