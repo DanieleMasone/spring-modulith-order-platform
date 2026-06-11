@@ -101,7 +101,7 @@ The build includes:
 * Application tests for use case orchestration, duplicate-customer conflicts and module API behavior.
 * Spring Boot integration tests with Testcontainers and PostgreSQL for REST happy paths, validation failures, not-found failures, business-rule failures, persistence and event consumption.
 * Spring Modulith architecture verification through `ApplicationModules.of(OrderPlatformApplication.class).verify()`.
-* Maven artifact checks for JaCoCo, OpenAPI documentation and the GitHub Pages artifact.
+* Maven artifact checks for JaCoCo, Javadoc, OpenAPI documentation and the GitHub Pages artifact.
 
 The project intentionally has no H2 dependency.
 
@@ -117,15 +117,17 @@ generates:
 
 ```text
 target/site/jacoco/index.html
+target/site/apidocs/index.html
 target/generated-docs/openapi/index.html
 target/generated-docs/openapi/openapi.json
 target/pages/index.html
 target/pages/jacoco/index.html
+target/pages/javadoc/index.html
 target/pages/openapi/index.html
 target/pages/openapi/openapi.json
 ```
 
-GitHub Pages publishes only `target/pages`, which contains the static landing page, JaCoCo report, OpenAPI HTML documentation and OpenAPI JSON contract.
+GitHub Pages publishes only `target/pages`, which contains the static landing page, JaCoCo report, Javadoc, OpenAPI HTML documentation and OpenAPI JSON contract.
 
 ## Local Development
 
@@ -160,7 +162,7 @@ The Dockerfile packages the already-built jar and does not run tests again.
 
 ## CI/CD
 
-The GitHub Actions workflow uses Java 21 with Maven cache, runs exactly one Maven `clean verify`, validates generated artifacts, validates Docker Compose, builds the Docker image after tests pass, uploads only `target/pages` and deploys GitHub Pages through the official Pages Actions flow.
+The GitHub Actions workflow uses Java 21 with Maven cache, runs exactly one Maven `clean verify`, validates generated coverage, Javadoc, OpenAPI and Pages artifacts, validates Docker Compose, builds the Docker image after tests pass, uploads only `target/pages` and deploys GitHub Pages through the official Pages Actions flow.
 
 ## Excluded Technologies
 
@@ -172,4 +174,4 @@ The repository intentionally excludes Kubernetes, microservices, Redis, Kafka, O
 * Domain events are used for post-commit payment and notification workflows, while customer validation and pricing stay synchronous because the order cannot be accepted without them.
 * OpenAPI-first generation is limited to REST contracts. Internal module APIs remain hand-written records and interfaces so generated DTOs do not leak into the domain model.
 * PostgreSQL and Flyway are used in both runtime and integration tests to keep schema behavior realistic. H2 is deliberately excluded.
-* The project avoids an outbox, external broker and production notification adapters until there is a real reliability or integration requirement for them.
+* The project does not include an outbox, external broker or production notification adapters. The current notification module records notification intents inside the monolith.

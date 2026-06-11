@@ -451,6 +451,7 @@
           <li><a href="#architecture">Architecture</a></li>
           <li><a href="#modules">Modules</a></li>
           <li><a href="#docs">Generated docs</a></li>
+          <li><a href="#quality">Quality gates</a></li>
           <li><a href="#local">Local development</a></li>
         </ul>
         <button class="theme-toggle" type="button" data-theme-toggle aria-pressed="false">Dark mode</button>
@@ -466,6 +467,7 @@
         <div class="actions" aria-label="Project and generated documentation links">
           <a class="button primary" href="openapi/">OpenAPI docs</a>
           <a class="button" href="jacoco/">Coverage report</a>
+          <a class="button" href="javadoc/">Javadoc</a>
           <a class="button" href="openapi/openapi.json">OpenAPI JSON</a>
           <a class="button" href="https://github.com/DanieleMasone/spring-modulith-order-platform">GitHub repository</a>
         </div>
@@ -553,7 +555,7 @@ notifications
     </section>
 
     <section id="quality" aria-labelledby="quality-title">
-      <h2 id="quality-title">Quality &amp; Reliability</h2>
+      <h2 id="quality-title">Quality Gates</h2>
       <div class="grid">
         <article class="item">
           <h3>Architecture governance</h3>
@@ -567,16 +569,21 @@ notifications
           <h3>Problem details</h3>
           <p>REST errors use RFC7807 for validation failures, business rules and missing resources.</p>
         </article>
+        <article class="item">
+          <h3>Generated artifacts</h3>
+          <p>Maven fails verification when coverage, OpenAPI, Javadoc or Pages outputs are missing.</p>
+        </article>
       </div>
     </section>
 
     <section id="docs" aria-labelledby="docs-title">
       <h2 id="docs-title">Generated Documentation</h2>
-      <p>The Pages artifact is assembled from build outputs only. No generated report or generated OpenAPI page is committed to the repository.</p>
+      <p>The Pages artifact is assembled from build outputs only. No generated report, OpenAPI page or Javadoc page is committed to the repository.</p>
       <div class="links">
         <a class="button" href="openapi/">OpenAPI HTML</a>
         <a class="button" href="openapi/openapi.json">OpenAPI JSON</a>
         <a class="button" href="jacoco/">JaCoCo report</a>
+        <a class="button" href="javadoc/">Javadoc</a>
         <a class="button" href="https://github.com/DanieleMasone/spring-modulith-order-platform">GitHub repository</a>
       </div>
     </section>
@@ -591,10 +598,6 @@ notifications
       <p>The pipeline checks out the repository, sets up Java 21, runs one Maven verification, validates generated artifacts, validates Docker Compose, builds the Docker image and publishes <code>target/pages</code>.</p>
     </section>
 
-    <section id="future" aria-labelledby="future-title">
-      <h2 id="future-title">Future Improvements</h2>
-      <p>Possible next steps include richer order state transitions, shipment integration and production notification adapters. Distributed infrastructure remains deferred until concrete requirements justify it.</p>
-    </section>
   </main>
 
   <footer>

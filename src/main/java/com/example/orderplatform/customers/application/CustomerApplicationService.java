@@ -13,6 +13,9 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Application service that registers customers and backs the customer lookup module API.
+ */
 @Service
 @Transactional
 public class CustomerApplicationService implements CustomerDirectory {
@@ -23,6 +26,14 @@ public class CustomerApplicationService implements CustomerDirectory {
         this.customers = customers;
     }
 
+    /**
+     * Registers a new active customer after normalizing and validating the submitted identity fields.
+     *
+     * @param fullName customer display name
+     * @param email customer email address
+     * @return created customer snapshot
+     * @throws ResourceConflictException when another customer already uses the email address
+     */
     public CustomerSnapshot createCustomer(String fullName, String email) {
         CustomerRegistration registration = CustomerRegistration.register(fullName, email);
         customers.findByEmail(registration.email()).ifPresent(existing -> {
@@ -39,6 +50,13 @@ public class CustomerApplicationService implements CustomerDirectory {
         return toSnapshot(customers.save(customer));
     }
 
+    /**
+     * Retrieves the customer snapshot required by order placement.
+     *
+     * @param customerId customer identifier
+     * @return immutable customer snapshot
+     * @throws ResourceNotFoundException when the customer does not exist
+     */
     @Override
     @Transactional(readOnly = true)
     public CustomerSnapshot getRequiredCustomer(UUID customerId) {

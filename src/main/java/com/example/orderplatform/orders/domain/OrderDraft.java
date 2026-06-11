@@ -5,6 +5,12 @@ import com.example.orderplatform.Money;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Validated order draft created after pricing has accepted each requested line.
+ *
+ * @param customerId customer placing the order
+ * @param lines priced order lines
+ */
 public record OrderDraft(UUID customerId, List<OrderLineDraft> lines) {
 
     public OrderDraft {
@@ -18,6 +24,11 @@ public record OrderDraft(UUID customerId, List<OrderLineDraft> lines) {
         calculateTotal(lines);
     }
 
+    /**
+     * Calculates the order total from all priced lines.
+     *
+     * @return total monetary value
+     */
     public Money total() {
         return calculateTotal(lines);
     }

@@ -2,6 +2,17 @@ package com.example.orderplatform.notifications.domain;
 
 import com.example.orderplatform.BusinessRuleViolationException;
 
+/**
+ * Validated notification intent before it is persisted.
+ *
+ * <p>The module records intents for email and webhook channels; it does not deliver messages to
+ * external systems.
+ *
+ * @param recipient logical recipient
+ * @param channel supported channel, either {@code EMAIL} or {@code WEBHOOK}
+ * @param type notification business type
+ * @param payload notification payload text
+ */
 public record NotificationDraft(String recipient, String channel, String type, String payload) {
 
     public NotificationDraft {

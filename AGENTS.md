@@ -30,6 +30,7 @@ Generated OpenAPI interfaces and DTOs must come from the contract in `src/main/r
 Maven is the source of truth. `./mvnw clean verify` must generate:
 
 * `target/site/jacoco/`
+* `target/site/apidocs/`
 * `target/generated-docs/openapi/index.html`
 * `target/generated-docs/openapi/openapi.json`
 * `target/pages/`
@@ -52,7 +53,7 @@ The CI workflow must:
 * Verify generated artifacts.
 * Validate Docker Compose.
 * Build the Docker image after tests pass.
-* Publish only `target/pages` to GitHub Pages.
+* Publish only `target/pages`, including Javadoc under `target/pages/javadoc/`, to GitHub Pages.
 
 Avoid duplicate Maven executions and unnecessary matrix builds.
 

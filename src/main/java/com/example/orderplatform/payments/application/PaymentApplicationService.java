@@ -19,6 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+/**
+ * Application service that prepares payments from committed orders and authorizes matching payments.
+ */
 @Service
 @Transactional
 public class PaymentApplicationService implements PaymentManagement {
@@ -31,6 +34,14 @@ public class PaymentApplicationService implements PaymentManagement {
         this.events = events;
     }
 
+    /**
+     * Prepares one pending payment for a committed order.
+     *
+     * <p>The listener runs after the order transaction commits and uses a new transaction so payment
+     * preparation is not part of the original order write.
+     *
+     * @param event committed order event
+     */
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void preparePayment(OrderCreatedEvent event) {
@@ -41,6 +52,13 @@ public class PaymentApplicationService implements PaymentManagement {
                 OffsetDateTime.now())));
     }
 
+    /**
+     * Authorizes an existing pending payment when the submitted amount equals the order total.
+     *
+     * @param orderId order identifier
+     * @param amount submitted payment amount
+     * @return authorized payment summary
+     */
     @Override
     public PaymentSummary authorize(UUID orderId, Money amount) {
         PaymentEntity payment = payments.findByOrderId(orderId)
@@ -61,6 +79,13 @@ public class PaymentApplicationService implements PaymentManagement {
         return summary;
     }
 
+    /**
+     * Retrieves a payment by identifier.
+     *
+     * @param paymentId payment identifier
+     * @return payment summary
+     * @throws ResourceNotFoundException when the payment does not exist
+     */
     @Override
     @Transactional(readOnly = true)
     public PaymentSummary getPayment(UUID paymentId) {
@@ -69,6 +94,12 @@ public class PaymentApplicationService implements PaymentManagement {
                 .orElseThrow(() -> new ResourceNotFoundException("Payment " + paymentId + " was not found."));
     }
 
+    /**
+     * Finds the payment prepared for an order.
+     *
+     * @param orderId order identifier
+     * @return payment summary when a payment exists
+     */
     @Override
     @Transactional(readOnly = true)
     public Optional<PaymentSummary> findByOrderId(UUID orderId) {

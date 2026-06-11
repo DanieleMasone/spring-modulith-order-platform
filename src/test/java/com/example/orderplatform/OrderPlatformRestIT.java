@@ -7,7 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +22,6 @@ class OrderPlatformRestIT extends AbstractPostgresIntegrationTest {
 
     @Autowired
     MockMvc mockMvc;
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
     void declaredEndpointsWorkEndToEnd() throws Exception {
@@ -168,8 +166,7 @@ class OrderPlatformRestIT extends AbstractPostgresIntegrationTest {
                 .andExpect(jsonPath("$.fullName").value(fullName))
                 .andReturn();
 
-        var body = objectMapper.readTree(result.getResponse().getContentAsString());
-        return new CustomerPayload(body.path("id").asText());
+        return new CustomerPayload(JsonPath.read(result.getResponse().getContentAsString(), "$.id"));
     }
 
     private OrderPayload createOrder(String customerId) throws Exception {
@@ -190,8 +187,7 @@ class OrderPlatformRestIT extends AbstractPostgresIntegrationTest {
                 .andExpect(jsonPath("$.total.amount").value(49.97))
                 .andReturn();
 
-        var body = objectMapper.readTree(result.getResponse().getContentAsString());
-        return new OrderPayload(body.path("id").asText());
+        return new OrderPayload(JsonPath.read(result.getResponse().getContentAsString(), "$.id"));
     }
 
     private PaymentPayload authorizePayment(String orderId, String amount) throws Exception {
@@ -208,8 +204,7 @@ class OrderPlatformRestIT extends AbstractPostgresIntegrationTest {
                 .andExpect(jsonPath("$.status").value("AUTHORIZED"))
                 .andReturn();
 
-        var body = objectMapper.readTree(result.getResponse().getContentAsString());
-        return new PaymentPayload(body.path("id").asText());
+        return new PaymentPayload(JsonPath.read(result.getResponse().getContentAsString(), "$.id"));
     }
 
     private String uniqueEmail() {

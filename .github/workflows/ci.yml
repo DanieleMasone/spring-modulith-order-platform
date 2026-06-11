@@ -37,10 +37,12 @@ jobs:
       - name: Verify Generated Artifacts
         run: |
           test -f target/site/jacoco/index.html
+          test -f target/site/apidocs/index.html
           test -f target/generated-docs/openapi/index.html
           test -f target/generated-docs/openapi/openapi.json
           test -f target/pages/index.html
           test -f target/pages/jacoco/index.html
+          test -f target/pages/javadoc/index.html
           test -f target/pages/openapi/index.html
           test -f target/pages/openapi/openapi.json
 

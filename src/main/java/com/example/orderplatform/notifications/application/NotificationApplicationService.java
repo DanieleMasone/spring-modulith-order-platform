@@ -14,6 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+/**
+ * Application service that records notification intents after committed order and payment events.
+ */
 @Service
 @Transactional
 public class NotificationApplicationService implements NotificationLog {
@@ -24,6 +27,11 @@ public class NotificationApplicationService implements NotificationLog {
         this.notifications = notifications;
     }
 
+    /**
+     * Records a customer notification intent for a committed order.
+     *
+     * @param event committed order event
+     */
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void on(OrderCreatedEvent event) {
@@ -34,6 +42,11 @@ public class NotificationApplicationService implements NotificationLog {
                 "Order " + event.orderId() + " was submitted for " + event.totalAmount() + " " + event.currency() + ".")));
     }
 
+    /**
+     * Records an operational notification intent for an authorized payment.
+     *
+     * @param event payment authorization event
+     */
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void on(PaymentAuthorizedEvent event) {
@@ -44,6 +57,11 @@ public class NotificationApplicationService implements NotificationLog {
                 "Payment " + event.paymentId() + " was authorized for order " + event.orderId() + ".")));
     }
 
+    /**
+     * Lists recently recorded notification intents.
+     *
+     * @return notification summaries in reverse creation order
+     */
     @Override
     @Transactional(readOnly = true)
     public List<NotificationSummary> listRecent() {

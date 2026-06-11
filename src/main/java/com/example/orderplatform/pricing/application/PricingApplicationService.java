@@ -14,6 +14,9 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Application service that reads the active catalog and calculates quote totals for order placement.
+ */
 @Service
 @Transactional(readOnly = true)
 public class PricingApplicationService implements PricingService {
@@ -24,6 +27,14 @@ public class PricingApplicationService implements PricingService {
         this.catalog = catalog;
     }
 
+    /**
+     * Quotes the requested products using active catalog entries.
+     *
+     * @param requests product and quantity requests
+     * @return priced quote with one line per request
+     * @throws BusinessRuleViolationException when the request is empty, has an invalid quantity or mixes currencies
+     * @throws ResourceNotFoundException when a product code is not active in the catalog
+     */
     @Override
     public PricingQuote quoteFor(List<PricingRequest> requests) {
         if (requests == null || requests.isEmpty()) {

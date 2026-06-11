@@ -23,6 +23,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Application service that coordinates customer lookup, pricing, order persistence and order events.
+ */
 @Service
 @Transactional
 public class OrderApplicationService implements OrderManagement {
@@ -43,6 +46,12 @@ public class OrderApplicationService implements OrderManagement {
         this.events = events;
     }
 
+    /**
+     * Places a submitted order and publishes an order-created event after persistence.
+     *
+     * @param command order placement command
+     * @return submitted order summary
+     */
     @Override
     public OrderSummary placeOrder(OrderCommand command) {
         customers.getRequiredCustomer(command.customerId());
@@ -71,6 +80,13 @@ public class OrderApplicationService implements OrderManagement {
         return summary;
     }
 
+    /**
+     * Retrieves a persisted order summary.
+     *
+     * @param orderId order identifier
+     * @return submitted order summary
+     * @throws ResourceNotFoundException when the order does not exist
+     */
     @Override
     @Transactional(readOnly = true)
     public OrderSummary getOrder(UUID orderId) {

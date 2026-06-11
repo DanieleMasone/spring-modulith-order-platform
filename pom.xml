@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.6</version>
+        <version>4.1.0</version>
         <relativePath/>
     </parent>
 
@@ -24,7 +24,8 @@
         <openapi-generator.version>7.23.0</openapi-generator.version>
         <swagger-annotations.version>2.2.50</swagger-annotations.version>
         <jacoco.version>0.8.15</jacoco.version>
-        <maven-failsafe-plugin.version>3.5.4</maven-failsafe-plugin.version>
+        <maven-failsafe-plugin.version>3.5.6</maven-failsafe-plugin.version>
+        <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <maven-antrun-plugin.version>3.2.0</maven-antrun-plugin.version>
     </properties>
 
@@ -69,10 +70,6 @@
             <artifactId>flyway-database-postgresql</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.modulith</groupId>
             <artifactId>spring-modulith-starter-core</artifactId>
         </dependency>
@@ -100,6 +97,11 @@
         <dependency>
             <groupId>org.springframework.modulith</groupId>
             <artifactId>spring-modulith-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -212,6 +214,30 @@
                 </configuration>
             </plugin>
             <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <locale>en</locale>
+                    <outputDirectory>${project.build.directory}/site</outputDirectory>
+                    <notimestamp>true</notimestamp>
+                    <failOnError>true</failOnError>
+                    <excludePackageNames>com.example.orderplatform.generated*:com.example.orderplatform.*.infrastructure</excludePackageNames>
+                    <additionalJOptions>
+                        <additionalJOption>-Xdoclint:all,-missing</additionalJOption>
+                    </additionalJOptions>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>generate-javadoc</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>javadoc-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
                     <execution>
@@ -262,6 +288,22 @@
                             </resources>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>copy-javadoc-to-pages</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/pages/javadoc</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.build.directory}/site/apidocs</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -291,17 +333,21 @@
                         <configuration>
                             <target>
                                 <available file="${project.build.directory}/site/jacoco/index.html" property="jacoco.report.exists"/>
+                                <available file="${project.build.directory}/site/apidocs/index.html" property="javadoc.report.exists"/>
                                 <available file="${project.build.directory}/generated-docs/openapi/index.html" property="openapi.docs.exists"/>
                                 <available file="${project.build.directory}/generated-docs/openapi/openapi.json" property="openapi.json.exists"/>
                                 <available file="${project.build.directory}/pages/index.html" property="pages.index.exists"/>
                                 <available file="${project.build.directory}/pages/jacoco/index.html" property="pages.jacoco.exists"/>
+                                <available file="${project.build.directory}/pages/javadoc/index.html" property="pages.javadoc.exists"/>
                                 <available file="${project.build.directory}/pages/openapi/index.html" property="pages.openapi.exists"/>
                                 <available file="${project.build.directory}/pages/openapi/openapi.json" property="pages.openapi.json.exists"/>
                                 <fail unless="jacoco.report.exists" message="JaCoCo report was not generated."/>
+                                <fail unless="javadoc.report.exists" message="Javadoc was not generated."/>
                                 <fail unless="openapi.docs.exists" message="OpenAPI HTML documentation was not generated."/>
                                 <fail unless="openapi.json.exists" message="OpenAPI JSON was not copied to generated docs."/>
                                 <fail unless="pages.index.exists" message="GitHub Pages index was not generated."/>
                                 <fail unless="pages.jacoco.exists" message="JaCoCo report was not copied to GitHub Pages."/>
+                                <fail unless="pages.javadoc.exists" message="Javadoc was not copied to GitHub Pages."/>
                                 <fail unless="pages.openapi.exists" message="OpenAPI docs were not copied to GitHub Pages."/>
                                 <fail unless="pages.openapi.json.exists" message="OpenAPI JSON was not copied to GitHub Pages."/>
                             </target>

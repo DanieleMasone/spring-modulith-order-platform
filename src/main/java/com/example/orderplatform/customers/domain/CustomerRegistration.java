@@ -4,6 +4,15 @@ import com.example.orderplatform.BusinessRuleViolationException;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
+/**
+ * Validated registration command for creating a customer.
+ *
+ * <p>The email address is stripped and lower-cased before persistence so uniqueness checks are
+ * deterministic.
+ *
+ * @param fullName normalized customer display name
+ * @param email normalized email address
+ */
 public record CustomerRegistration(String fullName, String email) {
 
     private static final Pattern BASIC_EMAIL_PATTERN = Pattern.compile("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
@@ -27,6 +36,13 @@ public record CustomerRegistration(String fullName, String email) {
         }
     }
 
+    /**
+     * Creates a validated registration value.
+     *
+     * @param fullName submitted customer display name
+     * @param email submitted email address
+     * @return normalized registration
+     */
     public static CustomerRegistration register(String fullName, String email) {
         return new CustomerRegistration(fullName, email);
     }
