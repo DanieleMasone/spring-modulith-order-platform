@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Spring Modulith Order Platform: a production-oriented modular monolith backend portfolio project.">
-  <meta name="theme-color" content="#f6f8fb">
+  <meta name="theme-color" content="#f6f8fb" data-theme-color>
   <title>Spring Modulith Order Platform</title>
   <style>
     :root {
@@ -27,7 +27,7 @@
       --rose-soft: #ffe4e6;
       --code-bg: #eaf0f6;
       --shadow: 0 20px 45px rgb(20 32 51 / 0.10);
-      --radius: 8px;
+      --radius: 12px;
       --max: 1120px;
     }
 
@@ -90,12 +90,12 @@
       min-width: 320px;
       margin: 0;
       background:
-        radial-gradient(circle at top left, var(--accent-soft), transparent 360px),
-        linear-gradient(180deg, var(--bg) 0%, var(--surface-soft) 100%);
+              radial-gradient(circle at top left, var(--accent-soft), transparent 360px),
+              linear-gradient(180deg, var(--bg) 0%, var(--surface-soft) 100%);
       color: var(--text);
       font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       line-height: 1.6;
-      overflow-x: clip;
+      overflow-x: hidden;
     }
 
     body::before {
@@ -104,8 +104,8 @@
       inset: 0;
       pointer-events: none;
       background-image:
-        linear-gradient(var(--line) 1px, transparent 1px),
-        linear-gradient(90deg, var(--line) 1px, transparent 1px);
+              linear-gradient(var(--line) 1px, transparent 1px),
+              linear-gradient(90deg, var(--line) 1px, transparent 1px);
       background-size: 40px 40px;
       opacity: 0.18;
       mask-image: linear-gradient(180deg, black, transparent 62%);
@@ -170,7 +170,9 @@
       top: 0;
       z-index: 20;
       border-bottom: 1px solid var(--line);
+      background: var(--bg);
       background: color-mix(in srgb, var(--bg) 88%, transparent);
+      -webkit-backdrop-filter: blur(14px);
       backdrop-filter: blur(14px);
     }
 
@@ -257,24 +259,31 @@
     }
 
     .nav-links {
-      flex-wrap: wrap;
-      padding: 0;
+      flex-wrap: nowrap;
+      padding: 0 0 4px;
       margin: 0;
       list-style: none;
+      overflow-x: auto;
+      overscroll-behavior-inline: contain;
+      scrollbar-width: thin;
+      -webkit-overflow-scrolling: touch;
     }
 
     .nav-links a {
       min-height: 44px;
       display: inline-flex;
       align-items: center;
-      padding: 6px 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
       color: var(--muted);
       font-size: 0.92rem;
       font-weight: 650;
       text-decoration: none;
+      white-space: nowrap;
     }
 
     .nav-links a:hover {
+      background: var(--surface);
       color: var(--text);
     }
 
@@ -321,8 +330,8 @@
     }
 
     h1 {
-      max-width: 13ch;
-      font-size: clamp(2.35rem, 13vw, 4.8rem);
+      max-width: 14ch;
+      font-size: clamp(2.15rem, 11vw, 4.8rem);
       overflow-wrap: anywhere;
       text-wrap: balance;
     }
@@ -342,8 +351,7 @@
       font-size: clamp(1rem, 3.8vw, 1.18rem);
     }
 
-    .hero-actions,
-    .doc-actions {
+    .hero-actions {
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -367,6 +375,11 @@
       text-decoration: none;
       box-shadow: 0 10px 20px rgb(20 32 51 / 0.08);
       overflow-wrap: anywhere;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+      border-color: var(--accent);
     }
 
     .button.primary {
@@ -466,7 +479,7 @@
     .module-map {
       width: 100%;
       height: auto;
-      min-height: 260px;
+      min-height: 220px;
       padding: 4px;
       color: var(--text);
     }
@@ -578,6 +591,11 @@
       color: var(--text);
     }
 
+    .doc-link:hover {
+      border-color: var(--accent);
+      background: color-mix(in srgb, var(--surface) 88%, var(--accent-soft));
+    }
+
     .command-block {
       margin-top: 18px;
       border: 1px solid var(--line);
@@ -598,7 +616,7 @@
 
     .pipeline {
       display: grid;
-      gap: 10px;
+      gap: 14px;
       padding: 0;
       margin: 0;
       list-style: none;
@@ -607,26 +625,49 @@
 
     .pipeline li {
       counter-increment: step;
+      min-width: 0;
       display: grid;
-      grid-template-columns: 34px minmax(0, 1fr);
-      gap: 12px;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 14px;
       align-items: start;
-      padding: 14px;
+      padding: 16px;
       border: 1px solid var(--line);
       border-radius: var(--radius);
       background: var(--surface);
+      box-shadow: 0 10px 24px rgb(20 32 51 / 0.06);
     }
 
     .pipeline li::before {
       content: counter(step);
-      width: 34px;
-      height: 34px;
+      width: 36px;
+      height: 36px;
       display: inline-grid;
       place-items: center;
-      border-radius: 8px;
+      flex: 0 0 auto;
+      border-radius: 10px;
       background: var(--blue-soft);
       color: var(--blue);
       font-weight: 850;
+    }
+
+    .pipeline-step {
+      display: grid;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .pipeline-step strong {
+      color: var(--text);
+      line-height: 1.25;
+    }
+
+    .pipeline-step span {
+      color: var(--muted);
+    }
+
+    .pipeline code {
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
 
     .footer {
@@ -640,8 +681,7 @@
     }
 
     @media (min-width: 560px) {
-      .hero-actions,
-      .doc-actions {
+      .hero-actions {
         flex-direction: row;
         flex-wrap: wrap;
       }
@@ -669,6 +709,8 @@
 
       .nav-links {
         justify-content: flex-end;
+        overflow-x: visible;
+        padding-bottom: 0;
       }
 
       .theme-toggle {
@@ -701,7 +743,7 @@
       }
 
       .doc-grid {
-        grid-template-columns: repeat(5, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
 
       .gate-list {
@@ -709,7 +751,14 @@
       }
 
       .pipeline {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: 1fr;
+      }
+    }
+
+
+    @media (min-width: 980px) {
+      .doc-grid {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
       }
     }
 
@@ -720,6 +769,14 @@
 
       .evidence-panel {
         padding: 22px;
+      }
+
+      .pipeline {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .pipeline li {
+        grid-template-columns: 1fr;
       }
     }
 
@@ -736,7 +793,7 @@
       }
 
       .nav-links a {
-        padding-inline: 6px;
+        padding-inline: 8px;
         font-size: 0.86rem;
       }
 
@@ -761,13 +818,17 @@
       .skip-link {
         transition: none;
       }
+
+      .button:hover {
+        transform: none;
+      }
     }
   </style>
   <script>
     (function () {
-      var key = "spring-modulith-order-platform-theme";
+      const key = "spring-modulith-order-platform-theme";
       try {
-        var storedTheme = localStorage.getItem(key);
+        const storedTheme = localStorage.getItem(key);
         if (storedTheme === "light" || storedTheme === "dark") {
           document.documentElement.dataset.theme = storedTheme;
         }
@@ -778,286 +839,305 @@
   </script>
 </head>
 <body>
-  <a class="skip-link" href="#content">Skip to content</a>
+<a class="skip-link" href="#content">Skip to content</a>
 
-  <header class="topbar">
-    <nav class="nav" aria-label="Primary navigation">
-      <div class="brand-row">
-        <a class="brand" href="#content" aria-label="Spring Modulith Order Platform home">
-          <span class="brand-mark" aria-hidden="true">SM</span>
-          <span class="brand-text">Spring Modulith Order Platform</span>
-        </a>
-        <button class="theme-toggle" type="button" data-theme-toggle aria-pressed="false" aria-label="Switch color theme">
-          <span class="theme-icon" aria-hidden="true">D</span>
-          <span class="theme-label">Switch color theme</span>
-        </button>
+<header class="topbar">
+  <nav class="nav" aria-label="Primary navigation">
+    <div class="brand-row">
+      <a class="brand" href="#content" aria-label="Spring Modulith Order Platform home">
+        <span class="brand-mark" aria-hidden="true">SM</span>
+        <span class="brand-text">Spring Modulith Order Platform</span>
+      </a>
+      <button class="theme-toggle" type="button" data-theme-toggle aria-pressed="false" aria-label="Switch color theme">
+        <span class="theme-icon" aria-hidden="true">◐</span>
+        <span class="theme-label">Switch color theme</span>
+      </button>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#boundaries">Boundaries</a></li>
+      <li><a href="#quality">Quality</a></li>
+      <li><a href="#docs">Docs</a></li>
+      <li><a href="#local">Local</a></li>
+      <li><a href="#ci">CI/CD</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main class="page" id="content">
+  <section class="hero" aria-labelledby="hero-title">
+    <div>
+      <span class="eyebrow">Senior backend portfolio</span>
+      <h1 id="hero-title">Spring Modulith Order Platform</h1>
+      <p class="lead">A production-oriented modular monolith for order management. It demonstrates Spring Modulith boundaries, contract-first REST APIs, PostgreSQL persistence, domain events, architecture tests and generated documentation without distributed-system theater.</p>
+      <div class="hero-actions" aria-label="Primary project links">
+        <a class="button primary" href="openapi/">OpenAPI Documentation</a>
+        <a class="button" href="https://github.com/DanieleMasone/spring-modulith-order-platform">GitHub Repository</a>
+        <a class="button secondary" href="#docs">Generated Reports</a>
       </div>
-      <ul class="nav-links">
-        <li><a href="#architecture">Architecture</a></li>
-        <li><a href="#boundaries">Boundaries</a></li>
-        <li><a href="#quality">Quality</a></li>
-        <li><a href="#docs">Docs</a></li>
-        <li><a href="#local">Local</a></li>
-        <li><a href="#ci">CI/CD</a></li>
+    </div>
+
+    <aside class="evidence-panel" aria-labelledby="evidence-title">
+      <div class="panel-title">
+        <span id="evidence-title">Build evidence</span>
+        <span class="status-pill">Maven verified</span>
+      </div>
+      <ul class="proof-list">
+        <li>One Spring Boot 4 deployable, governed by Spring Modulith.</li>
+        <li>OpenAPI interfaces and DTOs generated during Maven build.</li>
+        <li>Integration tests run with Testcontainers and PostgreSQL.</li>
+        <li>JaCoCo, Javadoc, OpenAPI and Pages artifacts are checked in verify.</li>
       </ul>
-    </nav>
-  </header>
+    </aside>
+  </section>
 
-  <main class="page" id="content">
-    <section class="hero" aria-labelledby="hero-title">
-      <div>
-        <span class="eyebrow">Senior backend portfolio</span>
-        <h1 id="hero-title">Spring Modulith Order Platform</h1>
-        <p class="lead">A production-oriented modular monolith for order management. It demonstrates Spring Modulith boundaries, contract-first REST APIs, PostgreSQL persistence, domain events, architecture tests and generated documentation without distributed-system theater.</p>
-        <div class="hero-actions" aria-label="Primary project links">
-          <a class="button primary" href="openapi/">OpenAPI Documentation</a>
-          <a class="button" href="https://github.com/DanieleMasone/spring-modulith-order-platform">GitHub Repository</a>
-          <a class="button secondary" href="#docs">Generated Reports</a>
-        </div>
-      </div>
-
-      <aside class="evidence-panel" aria-labelledby="evidence-title">
-        <div class="panel-title">
-          <span id="evidence-title">Build evidence</span>
-          <span class="status-pill">Maven verified</span>
-        </div>
-        <ul class="proof-list">
-          <li>One Spring Boot 4 deployable, governed by Spring Modulith.</li>
-          <li>OpenAPI interfaces and DTOs generated during Maven build.</li>
-          <li>Integration tests run with Testcontainers and PostgreSQL.</li>
-          <li>JaCoCo, Javadoc, OpenAPI and Pages artifacts are checked in verify.</li>
-        </ul>
-      </aside>
-    </section>
-
-    <section class="section" id="architecture" aria-labelledby="architecture-title">
-      <div class="split">
-        <div class="section-heading">
-          <span class="eyebrow">Architecture</span>
-          <h2 id="architecture-title">A modular monolith with explicit seams.</h2>
-          <p>The application keeps one deployment unit and uses Spring Modulith to make module relationships visible and enforceable. Cross-module collaboration goes through named API packages or domain events.</p>
-          <p>Inside each module, the project follows a pragmatic ports-and-adapters style: domain logic stays framework-independent, application services orchestrate use cases, and infrastructure contains persistence adapters.</p>
-        </div>
-
-        <svg class="module-map" viewBox="0 0 560 360" role="img" aria-labelledby="map-title map-desc">
-          <title id="map-title">Spring Modulith module dependency map</title>
-          <desc id="map-desc">Orders uses customer and pricing APIs. Payments and notifications react to events emitted by orders and payments.</desc>
-          <defs>
-            <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-              <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"></path>
-            </marker>
-          </defs>
-          <g fill="none" stroke="currentColor" stroke-width="2.5" opacity="0.75" marker-end="url(#arrow)">
-            <path d="M 280 105 L 146 178"></path>
-            <path d="M 280 105 L 414 178"></path>
-            <path d="M 280 136 L 280 210"></path>
-            <path d="M 320 246 L 414 278"></path>
-          </g>
-          <g font-size="16" text-anchor="middle">
-            <rect x="206" y="54" width="148" height="64" rx="8" fill="var(--accent)"></rect>
-            <text x="280" y="92" fill="#ffffff" font-weight="800">orders</text>
-
-            <rect x="58" y="170" width="148" height="64" rx="8" fill="var(--surface)" stroke="var(--line)"></rect>
-            <text x="132" y="198" fill="var(--text)" font-weight="800">customers</text>
-            <text x="132" y="219" fill="var(--muted)" font-size="12">named API</text>
-
-            <rect x="354" y="170" width="148" height="64" rx="8" fill="var(--surface)" stroke="var(--line)"></rect>
-            <text x="428" y="198" fill="var(--text)" font-weight="800">pricing</text>
-            <text x="428" y="219" fill="var(--muted)" font-size="12">named API</text>
-
-            <rect x="206" y="224" width="148" height="64" rx="8" fill="var(--blue)"></rect>
-            <text x="280" y="252" fill="#ffffff" font-weight="800">payments</text>
-            <text x="280" y="273" fill="#ffffff" font-size="12">order event</text>
-
-            <rect x="354" y="268" width="148" height="56" rx="8" fill="var(--rose)"></rect>
-            <text x="428" y="301" fill="#ffffff" font-weight="800">notifications</text>
-          </g>
-        </svg>
-      </div>
-    </section>
-
-    <section class="section" id="boundaries" aria-labelledby="boundaries-title">
+  <section class="section" id="architecture" aria-labelledby="architecture-title">
+    <div class="split">
       <div class="section-heading">
-        <span class="eyebrow">Module boundaries</span>
-        <h2 id="boundaries-title">Small public APIs, private implementation details.</h2>
-        <p>Each module owns a narrow business capability. JPA entities stay in infrastructure packages, while public module APIs expose intentional records and interfaces.</p>
+        <span class="eyebrow">Architecture</span>
+        <h2 id="architecture-title">A modular monolith with explicit seams.</h2>
+        <p>The application keeps one deployment unit and uses Spring Modulith to make module relationships visible and enforceable. Cross-module collaboration goes through named API packages or domain events.</p>
+        <p>Inside each module, the project follows a pragmatic ports-and-adapters style: domain logic stays framework-independent, application services orchestrate use cases, and infrastructure contains persistence adapters.</p>
       </div>
-      <div class="cards">
-        <article class="card">
-          <span class="tag teal">identity</span>
-          <h3>Customers</h3>
-          <p>Registers customers and exposes customer lookup for order validation.</p>
-        </article>
-        <article class="card">
-          <span class="tag blue">catalog</span>
-          <h3>Pricing</h3>
-          <p>Reads active catalog prices and calculates deterministic quotes.</p>
-        </article>
-        <article class="card">
-          <span class="tag amber">workflow</span>
-          <h3>Orders</h3>
-          <p>Coordinates customer validation, pricing, persistence and order events.</p>
-        </article>
-        <article class="card">
-          <span class="tag rose">state</span>
-          <h3>Payments</h3>
-          <p>Prepares pending payments after order commit and authorizes matching amounts.</p>
-        </article>
-        <article class="card">
-          <span class="tag">events</span>
-          <h3>Notifications</h3>
-          <p>Records notification intents created from order and payment events.</p>
-        </article>
-        <article class="card">
-          <span class="tag">contract</span>
-          <h3>Generated API</h3>
-          <p>Generated REST interfaces and DTOs stay at the API boundary.</p>
-        </article>
-      </div>
-    </section>
 
-    <section class="section" id="quality" aria-labelledby="quality-title">
-      <div class="section-heading">
-        <span class="eyebrow">Quality gates</span>
-        <h2 id="quality-title">Verification is part of the build, not a checklist in prose.</h2>
-        <p>The repository favors behavior-focused tests and build-time artifact checks over decorative coverage targets.</p>
-      </div>
-      <ul class="gate-list">
-        <li>
-          <strong>Architecture tests</strong>
-          <span><code>ApplicationModules.verify()</code> validates Spring Modulith boundaries, and ArchUnit guards domain and application dependencies.</span>
-        </li>
-        <li>
-          <strong>REST integration tests</strong>
-          <span>Happy paths, validation failures, not-found responses, business rules, persistence and event side effects run against PostgreSQL.</span>
-        </li>
-        <li>
-          <strong>Generated documentation</strong>
-          <span>Maven produces and verifies JaCoCo, Javadoc, OpenAPI HTML, OpenAPI JSON and the Pages artifact.</span>
-        </li>
-        <li>
-          <strong>Deployment checks</strong>
-          <span>CI validates Docker Compose and builds the Docker image after tests pass.</span>
-        </li>
-      </ul>
-    </section>
+      <svg class="module-map" viewBox="0 0 560 360" role="img" aria-labelledby="map-title map-desc">
+        <title id="map-title">Spring Modulith module dependency map</title>
+        <desc id="map-desc">Orders uses customer and pricing APIs. Payments and notifications react to events emitted by orders and payments.</desc>
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"></path>
+          </marker>
+        </defs>
+        <g fill="none" stroke="currentColor" stroke-width="2.5" opacity="0.75" marker-end="url(#arrow)">
+          <path d="M 280 105 L 146 178"></path>
+          <path d="M 280 105 L 414 178"></path>
+          <path d="M 280 136 L 280 210"></path>
+          <path d="M 320 246 L 414 278"></path>
+        </g>
+        <g font-size="16" text-anchor="middle">
+          <rect x="206" y="54" width="148" height="64" rx="8" fill="var(--accent)"></rect>
+          <text x="280" y="92" fill="#ffffff" font-weight="800">orders</text>
 
-    <section class="section" id="docs" aria-labelledby="docs-title">
-      <div class="section-heading">
-        <span class="eyebrow">Generated documentation</span>
-        <h2 id="docs-title">Published Pages are assembled from Maven outputs.</h2>
-        <p>The committed source remains <code>src/site/index.html</code>. Generated reports are copied into <code>target/pages</code> during Maven verify and then published by GitHub Pages.</p>
-      </div>
-      <div class="doc-grid">
-        <a class="doc-link" href="openapi/">
-          <strong>OpenAPI Documentation</strong>
-          <span>HTML contract reference generated from the OpenAPI source.</span>
-        </a>
-        <a class="doc-link" href="openapi/openapi.json">
-          <strong>OpenAPI JSON</strong>
-          <span>The published machine-readable REST contract.</span>
-        </a>
-        <a class="doc-link" href="javadoc/">
-          <strong>Javadoc</strong>
-          <span>Public API and domain documentation generated by Maven.</span>
-        </a>
-        <a class="doc-link" href="jacoco/">
-          <strong>JaCoCo Coverage</strong>
-          <span>Coverage report for non-generated project code.</span>
-        </a>
-        <a class="doc-link" href="https://github.com/DanieleMasone/spring-modulith-order-platform">
-          <strong>GitHub Repository</strong>
-          <span>Source, CI workflow, Dockerfile and documentation.</span>
-        </a>
-      </div>
-    </section>
+          <rect x="58" y="170" width="148" height="64" rx="8" fill="var(--surface)" stroke="var(--line)"></rect>
+          <text x="132" y="198" fill="var(--text)" font-weight="800">customers</text>
+          <text x="132" y="219" fill="var(--muted)" font-size="12">named API</text>
 
-    <section class="section" id="local" aria-labelledby="local-title">
-      <div class="section-heading">
-        <span class="eyebrow">Local development</span>
-        <h2 id="local-title">Run the same verification path locally.</h2>
-        <p>PostgreSQL is the development and test database. H2 is intentionally excluded so schema behavior stays realistic.</p>
-      </div>
-      <div class="command-block" aria-label="Local development commands">
+          <rect x="354" y="170" width="148" height="64" rx="8" fill="var(--surface)" stroke="var(--line)"></rect>
+          <text x="428" y="198" fill="var(--text)" font-weight="800">pricing</text>
+          <text x="428" y="219" fill="var(--muted)" font-size="12">named API</text>
+
+          <rect x="206" y="224" width="148" height="64" rx="8" fill="var(--blue)"></rect>
+          <text x="280" y="252" fill="#ffffff" font-weight="800">payments</text>
+          <text x="280" y="273" fill="#ffffff" font-size="12">order event</text>
+
+          <rect x="354" y="268" width="148" height="56" rx="8" fill="var(--rose)"></rect>
+          <text x="428" y="301" fill="#ffffff" font-weight="800">notifications</text>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <section class="section" id="boundaries" aria-labelledby="boundaries-title">
+    <div class="section-heading">
+      <span class="eyebrow">Module boundaries</span>
+      <h2 id="boundaries-title">Small public APIs, private implementation details.</h2>
+      <p>Each module owns a narrow business capability. JPA entities stay in infrastructure packages, while public module APIs expose intentional records and interfaces.</p>
+    </div>
+    <div class="cards">
+      <article class="card">
+        <span class="tag teal">identity</span>
+        <h3>Customers</h3>
+        <p>Registers customers and exposes customer lookup for order validation.</p>
+      </article>
+      <article class="card">
+        <span class="tag blue">catalog</span>
+        <h3>Pricing</h3>
+        <p>Reads active catalog prices and calculates deterministic quotes.</p>
+      </article>
+      <article class="card">
+        <span class="tag amber">workflow</span>
+        <h3>Orders</h3>
+        <p>Coordinates customer validation, pricing, persistence and order events.</p>
+      </article>
+      <article class="card">
+        <span class="tag rose">state</span>
+        <h3>Payments</h3>
+        <p>Prepares pending payments after order commit and authorizes matching amounts.</p>
+      </article>
+      <article class="card">
+        <span class="tag">events</span>
+        <h3>Notifications</h3>
+        <p>Records notification intents created from order and payment events.</p>
+      </article>
+      <article class="card">
+        <span class="tag">contract</span>
+        <h3>Generated API</h3>
+        <p>Generated REST interfaces and DTOs stay at the API boundary.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" id="quality" aria-labelledby="quality-title">
+    <div class="section-heading">
+      <span class="eyebrow">Quality gates</span>
+      <h2 id="quality-title">Verification is part of the build, not a checklist in prose.</h2>
+      <p>The repository favors behavior-focused tests and build-time artifact checks over decorative coverage targets.</p>
+    </div>
+    <ul class="gate-list">
+      <li>
+        <strong>Architecture tests</strong>
+        <span><code>ApplicationModules.verify()</code> validates Spring Modulith boundaries, and ArchUnit guards domain and application dependencies.</span>
+      </li>
+      <li>
+        <strong>REST integration tests</strong>
+        <span>Happy paths, validation failures, not-found responses, business rules, persistence and event side effects run against PostgreSQL.</span>
+      </li>
+      <li>
+        <strong>Generated documentation</strong>
+        <span>Maven produces and verifies JaCoCo, Javadoc, OpenAPI HTML, OpenAPI JSON and the Pages artifact.</span>
+      </li>
+      <li>
+        <strong>Deployment checks</strong>
+        <span>CI validates Docker Compose and builds the Docker image after tests pass.</span>
+      </li>
+    </ul>
+  </section>
+
+  <section class="section" id="docs" aria-labelledby="docs-title">
+    <div class="section-heading">
+      <span class="eyebrow">Generated documentation</span>
+      <h2 id="docs-title">Published Pages are assembled from Maven outputs.</h2>
+      <p>The committed source remains <code>src/site/index.html</code>. Generated reports are copied into <code>target/pages</code> during Maven verify and then published by GitHub Pages.</p>
+    </div>
+    <div class="doc-grid">
+      <a class="doc-link" href="openapi/">
+        <strong>OpenAPI Documentation</strong>
+        <span>HTML contract reference generated from the OpenAPI source.</span>
+      </a>
+      <a class="doc-link" href="openapi/openapi.json">
+        <strong>OpenAPI JSON</strong>
+        <span>The published machine-readable REST contract.</span>
+      </a>
+      <a class="doc-link" href="javadoc/">
+        <strong>Javadoc</strong>
+        <span>Public API and domain documentation generated by Maven.</span>
+      </a>
+      <a class="doc-link" href="jacoco/">
+        <strong>JaCoCo Coverage</strong>
+        <span>Coverage report for non-generated project code.</span>
+      </a>
+      <a class="doc-link" href="https://github.com/DanieleMasone/spring-modulith-order-platform">
+        <strong>GitHub Repository</strong>
+        <span>Source, CI workflow, Dockerfile and documentation.</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="section" id="local" aria-labelledby="local-title">
+    <div class="section-heading">
+      <span class="eyebrow">Local development</span>
+      <h2 id="local-title">Run the same verification path locally.</h2>
+      <p>PostgreSQL is the development and test database. H2 is intentionally excluded so schema behavior stays realistic.</p>
+    </div>
+    <div class="command-block" aria-label="Local development commands">
         <pre><code>docker compose up -d
 ./mvnw clean verify
 ./mvnw spring-boot:run</code></pre>
-      </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="section" id="ci" aria-labelledby="ci-title">
-      <div class="section-heading">
-        <span class="eyebrow">CI/CD</span>
-        <h2 id="ci-title">One Maven verification, then publish only generated Pages.</h2>
-        <p>The workflow keeps CI direct: no matrix builds, no duplicated Maven runs, and no generated reports committed to Git.</p>
-      </div>
-      <ol class="pipeline">
-        <li>Set up Java 21 and run <code>./mvnw -B -ntp clean verify</code>.</li>
-        <li>Check generated coverage, Javadoc, OpenAPI and Pages outputs.</li>
-        <li>Validate Docker Compose, build the image and deploy <code>target/pages</code>.</li>
-      </ol>
-    </section>
-  </main>
+  <section class="section" id="ci" aria-labelledby="ci-title">
+    <div class="section-heading">
+      <span class="eyebrow">CI/CD</span>
+      <h2 id="ci-title">One Maven verification, then publish only generated Pages.</h2>
+      <p>The workflow keeps CI direct: no matrix builds, no duplicated Maven runs, and no generated reports committed to Git.</p>
+    </div>
+    <ol class="pipeline">
+      <li>
+        <div class="pipeline-step">
+          <strong>Verify once</strong>
+          <span>Set up Java 21 with Maven cache and run <code>./mvnw -B -ntp clean verify</code>.</span>
+        </div>
+      </li>
+      <li>
+        <div class="pipeline-step">
+          <strong>Check artifacts</strong>
+          <span>Fail the build if coverage, Javadoc, OpenAPI or Pages outputs are missing.</span>
+        </div>
+      </li>
+      <li>
+        <div class="pipeline-step">
+          <strong>Package and publish</strong>
+          <span>Validate Docker Compose, build the image and deploy only <code>target/pages</code>.</span>
+        </div>
+      </li>
+    </ol>
+  </section>
+</main>
 
-  <footer class="footer">
-    Generated by Maven from <code>src/site/index.html</code>. Reports under <code>target/pages</code> are build artifacts.
-  </footer>
+<footer class="footer">
+  Generated by Maven from <code>src/site/index.html</code>. Reports under <code>target/pages</code> are build artifacts.
+</footer>
 
-  <script>
-    (function () {
-      var key = "spring-modulith-order-platform-theme";
-      var root = document.documentElement;
-      var toggle = document.querySelector("[data-theme-toggle]");
-      var prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+<script>
+  (function () {
+    const key = "spring-modulith-order-platform-theme";
+    const root = document.documentElement;
+    const toggle = document.querySelector("[data-theme-toggle]");
+    const themeColor = document.querySelector('meta[name="theme-color"]');
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
 
-      if (!toggle) {
+    if (!toggle) {
+      return;
+    }
+
+    function storedTheme() {
+      try {
+        return localStorage.getItem(key);
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function setStoredTheme(theme) {
+      try {
+        localStorage.setItem(key, theme);
+      } catch (error) {
         return;
       }
+    }
 
-      function storedTheme() {
-        try {
-          return localStorage.getItem(key);
-        } catch (error) {
-          return null;
-        }
+    function activeTheme() {
+      return root.dataset.theme || (prefersDark.matches ? "dark" : "light");
+    }
+
+    function updateToggle() {
+      const theme = activeTheme();
+      const nextTheme = theme === "dark" ? "light" : "dark";
+      toggle.setAttribute("aria-pressed", String(theme === "dark"));
+      toggle.setAttribute("aria-label", "Switch to " + nextTheme + " mode");
+      toggle.querySelector(".theme-icon").textContent = theme === "dark" ? "☀" : "☾";
+      toggle.querySelector(".theme-label").textContent = "Switch to " + nextTheme + " mode";
+      if (themeColor) {
+        themeColor.setAttribute("content", theme === "dark" ? "#0e141d" : "#f6f8fb");
       }
+    }
 
-      function setStoredTheme(theme) {
-        try {
-          localStorage.setItem(key, theme);
-        } catch (error) {
-          return;
-        }
-      }
-
-      function activeTheme() {
-        return root.dataset.theme || (prefersDark.matches ? "dark" : "light");
-      }
-
-      function updateToggle() {
-        var theme = activeTheme();
-        var nextTheme = theme === "dark" ? "light" : "dark";
-        toggle.setAttribute("aria-pressed", String(theme === "dark"));
-        toggle.setAttribute("aria-label", "Switch to " + nextTheme + " mode");
-        toggle.querySelector(".theme-icon").textContent = theme === "dark" ? "L" : "D";
-        toggle.querySelector(".theme-label").textContent = "Switch to " + nextTheme + " mode";
-      }
-
-      toggle.addEventListener("click", function () {
-        var nextTheme = activeTheme() === "dark" ? "light" : "dark";
-        root.dataset.theme = nextTheme;
-        setStoredTheme(nextTheme);
-        updateToggle();
-      });
-
-      prefersDark.addEventListener("change", function () {
-        if (!storedTheme()) {
-          updateToggle();
-        }
-      });
-
+    toggle.addEventListener("click", function () {
+      const nextTheme = activeTheme() === "dark" ? "light" : "dark";
+      root.dataset.theme = nextTheme;
+      setStoredTheme(nextTheme);
       updateToggle();
-    }());
-  </script>
+    });
+
+    prefersDark.addEventListener("change", function () {
+      if (!storedTheme()) {
+        updateToggle();
+      }
+    });
+
+    updateToggle();
+  }());
+</script>
 </body>
 </html>
