@@ -41,6 +41,7 @@ jobs:
           test -f target/generated-docs/openapi/index.html
           test -f target/generated-docs/openapi/openapi.json
           test -f target/pages/index.html
+          test -f target/pages/user-guide/index.html
           test -f target/pages/jacoco/index.html
           test -f target/pages/javadoc/index.html
           test -f target/pages/openapi/index.html

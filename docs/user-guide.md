@@ -162,6 +162,7 @@ Validation, missing resources, duplicate customers and business-rule failures ar
 
 Published documentation:
 
+* [User Guide](https://danielemasone.github.io/spring-modulith-order-platform/user-guide/)
 * [OpenAPI documentation](https://danielemasone.github.io/spring-modulith-order-platform/openapi/)
 * [OpenAPI JSON](https://danielemasone.github.io/spring-modulith-order-platform/openapi/openapi.json)
 * [Javadoc](https://danielemasone.github.io/spring-modulith-order-platform/javadoc/)
@@ -175,9 +176,10 @@ target/generated-docs/openapi/openapi.json
 target/site/apidocs/index.html
 target/site/jacoco/index.html
 target/pages/index.html
+target/pages/user-guide/index.html
 ```
 
-Generated OpenAPI interfaces, DTOs and HTML reports are build artifacts and are not committed.
+Generated OpenAPI interfaces, DTOs, HTML reports and the rendered User Guide page are build artifacts and are not committed.
 
 ## Quality Gates
 

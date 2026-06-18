@@ -36,10 +36,11 @@ Maven is the source of truth. `./mvnw clean verify` must generate:
 * `target/generated-docs/openapi/index.html`
 * `target/generated-docs/openapi/openapi.json`
 * `target/pages/`
+* `target/pages/user-guide/index.html`
 
-Maintain only `src/site/index.html` for the landing page. Do not create or commit duplicate HTML pages.
+Maintain only `src/site/index.html` for the landing page. Keep `docs/user-guide.md` as the manually maintained User Guide source. Maven publishes that Markdown guide into `target/pages/user-guide/`. Do not create or commit duplicate maintained HTML pages or generated User Guide HTML.
 
-Manually maintained Markdown under `docs/` is allowed when it provides practical guidance that is not duplicated from generated OpenAPI, Javadoc or JaCoCo reports. OpenAPI HTML, Javadoc and JaCoCo remain Maven-generated artifacts and must not be committed.
+Manually maintained Markdown under `docs/` is allowed when it provides practical guidance that is not duplicated from generated OpenAPI, Javadoc or JaCoCo reports. OpenAPI HTML, Javadoc, JaCoCo and rendered User Guide HTML remain Maven-generated artifacts and must not be committed.
 
 ## Testing Policy
 
@@ -57,7 +58,7 @@ The CI workflow must:
 * Verify generated artifacts.
 * Validate Docker Compose.
 * Build the Docker image after tests pass.
-* Publish only `target/pages`, including Javadoc under `target/pages/javadoc/`, to GitHub Pages.
+* Publish only `target/pages`, including the User Guide under `target/pages/user-guide/` and Javadoc under `target/pages/javadoc/`, to GitHub Pages.
 
 Avoid duplicate Maven executions and unnecessary matrix builds.
 

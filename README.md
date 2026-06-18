@@ -9,7 +9,7 @@
 
 Production-oriented modular monolith for order management. The repository demonstrates modular design, contract-first APIs, domain events, architecture governance, reliable PostgreSQL persistence and automated documentation without adding distributed infrastructure that this use case does not need.
 
-For local setup, API examples and troubleshooting, see the [User Guide](docs/user-guide.md).
+For local setup, API examples and troubleshooting, see the [User Guide](docs/user-guide.md) or the [published User Guide](https://danielemasone.github.io/spring-modulith-order-platform/user-guide/).
 
 ## Architecture
 
@@ -116,6 +116,7 @@ The project intentionally has no H2 dependency.
 Maven is the single source of truth. Running `./mvnw clean verify` generates the reports and assembles the Pages artifact:
 
 * [GitHub Pages landing page](https://danielemasone.github.io/spring-modulith-order-platform/)
+* [User Guide](https://danielemasone.github.io/spring-modulith-order-platform/user-guide/)
 * [OpenAPI documentation](https://danielemasone.github.io/spring-modulith-order-platform/openapi/)
 * [OpenAPI JSON](https://danielemasone.github.io/spring-modulith-order-platform/openapi/openapi.json)
 * [Javadoc](https://danielemasone.github.io/spring-modulith-order-platform/javadoc/)
@@ -133,7 +134,7 @@ docker compose up -d
 ./mvnw spring-boot:run
 ```
 
-The [User Guide](docs/user-guide.md) contains the full local workflow, sample requests and troubleshooting notes.
+The [User Guide](docs/user-guide.md) contains the full local workflow, sample requests and troubleshooting notes. Maven publishes the same guide to [GitHub Pages](https://danielemasone.github.io/spring-modulith-order-platform/user-guide/).
 
 ## Docker Usage
 
@@ -148,7 +149,7 @@ The Dockerfile packages the already-built jar and does not run tests again.
 
 ## CI/CD
 
-The GitHub Actions workflow uses Java 21 with Maven cache, runs exactly one Maven `clean verify`, validates generated coverage, Javadoc, OpenAPI and Pages artifacts, validates Docker Compose, builds the Docker image after tests pass, uploads only `target/pages` and deploys GitHub Pages through the official Pages Actions flow.
+The GitHub Actions workflow uses Java 21 with Maven cache, runs exactly one Maven `clean verify`, validates generated coverage, Javadoc, OpenAPI, User Guide and Pages artifacts, validates Docker Compose, builds the Docker image after tests pass, uploads only `target/pages` and deploys GitHub Pages through the official Pages Actions flow.
 
 ## Excluded Technologies
 

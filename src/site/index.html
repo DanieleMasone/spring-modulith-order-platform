@@ -994,7 +994,7 @@
       </li>
       <li>
         <strong>Generated documentation</strong>
-        <span>Maven produces and verifies JaCoCo, Javadoc, OpenAPI HTML, OpenAPI JSON and the Pages artifact.</span>
+        <span>Maven produces and verifies the User Guide, JaCoCo, Javadoc, OpenAPI HTML, OpenAPI JSON and the Pages artifact.</span>
       </li>
       <li>
         <strong>Deployment checks</strong>
@@ -1007,12 +1007,12 @@
     <div class="section-heading">
       <span class="eyebrow">Generated documentation</span>
       <h2 id="docs-title">Published Pages are assembled from Maven outputs.</h2>
-      <p>The committed source remains <code>src/site/index.html</code>. Generated reports are copied into <code>target/pages</code> during Maven verify and then published by GitHub Pages.</p>
+      <p>The committed source remains <code>src/site/index.html</code>. Generated reports and the rendered User Guide are copied into <code>target/pages</code> during Maven verify and then published by GitHub Pages.</p>
     </div>
     <div class="doc-grid">
-      <a class="doc-link" href="https://github.com/DanieleMasone/spring-modulith-order-platform/blob/main/docs/user-guide.md">
+      <a class="doc-link" href="user-guide/">
         <strong>User Guide</strong>
-        <span>Practical setup, API workflow examples and troubleshooting notes.</span>
+        <span>Published setup, API workflow examples and troubleshooting notes.</span>
       </a>
       <a class="doc-link" href="openapi/">
         <strong>OpenAPI Documentation</strong>
@@ -1066,7 +1066,7 @@
       <li>
         <div class="pipeline-step">
           <strong>Check artifacts</strong>
-          <span>Fail the build if coverage, Javadoc, OpenAPI or Pages outputs are missing.</span>
+          <span>Fail the build if the User Guide, coverage, Javadoc, OpenAPI or Pages outputs are missing.</span>
         </div>
       </li>
       <li>
