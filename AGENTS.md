@@ -39,6 +39,8 @@ Maven is the source of truth. `./mvnw clean verify` must generate:
 
 Maintain only `src/site/index.html` for the landing page. Do not create or commit duplicate HTML pages.
 
+Manually maintained Markdown under `docs/` is allowed when it provides practical guidance that is not duplicated from generated OpenAPI, Javadoc or JaCoCo reports. OpenAPI HTML, Javadoc and JaCoCo remain Maven-generated artifacts and must not be committed.
+
 ## Testing Policy
 
 * Unit tests cover business rules and value objects.

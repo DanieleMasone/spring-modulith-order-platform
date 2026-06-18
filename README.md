@@ -9,6 +9,8 @@
 
 Production-oriented modular monolith for order management. The repository demonstrates modular design, contract-first APIs, domain events, architecture governance, reliable PostgreSQL persistence and automated documentation without adding distributed infrastructure that this use case does not need.
 
+For local setup, API examples and troubleshooting, see the [User Guide](docs/user-guide.md).
+
 ## Architecture
 
 The application is one Spring Boot 4 deployable governed by Spring Modulith.
@@ -95,6 +97,8 @@ GET  /notifications
 
 The contract also exposes read endpoints for customer, order and payment lookup. Validation, not-found, conflict and business-rule failures are returned as RFC7807 `ProblemDetail` responses.
 
+See the [User Guide](docs/user-guide.md) for practical cURL examples.
+
 ## Testing Strategy
 
 The build includes:
@@ -109,51 +113,31 @@ The project intentionally has no H2 dependency.
 
 ## Generated Documentation
 
-Maven is the single source of truth. Running:
+Maven is the single source of truth. Running `./mvnw clean verify` generates the reports and assembles the Pages artifact:
 
-```bash
-./mvnw clean verify
-```
+* [GitHub Pages landing page](https://danielemasone.github.io/spring-modulith-order-platform/)
+* [OpenAPI documentation](https://danielemasone.github.io/spring-modulith-order-platform/openapi/)
+* [OpenAPI JSON](https://danielemasone.github.io/spring-modulith-order-platform/openapi/openapi.json)
+* [Javadoc](https://danielemasone.github.io/spring-modulith-order-platform/javadoc/)
+* [JaCoCo coverage](https://danielemasone.github.io/spring-modulith-order-platform/jacoco/)
 
-generates:
-
-```text
-target/site/jacoco/index.html
-target/site/apidocs/index.html
-target/generated-docs/openapi/index.html
-target/generated-docs/openapi/openapi.json
-target/pages/index.html
-target/pages/jacoco/index.html
-target/pages/javadoc/index.html
-target/pages/openapi/index.html
-target/pages/openapi/openapi.json
-```
-
-GitHub Pages publishes only `target/pages`, which contains the static landing page, JaCoCo report, Javadoc, OpenAPI HTML documentation and OpenAPI JSON contract.
+GitHub Pages publishes only `target/pages`. Generated reports and generated OpenAPI sources are not committed.
 
 ## Local Development
 
-Start PostgreSQL:
+Quick start:
 
 ```bash
 docker compose up -d
-```
-
-Run full verification:
-
-```bash
 ./mvnw clean verify
-```
-
-Run the application:
-
-```bash
 ./mvnw spring-boot:run
 ```
 
+The [User Guide](docs/user-guide.md) contains the full local workflow, sample requests and troubleshooting notes.
+
 ## Docker Usage
 
-Build verification happens before image creation:
+Build verification should happen before image creation:
 
 ```bash
 ./mvnw clean verify
