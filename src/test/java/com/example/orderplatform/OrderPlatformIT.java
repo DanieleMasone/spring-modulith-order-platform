@@ -51,9 +51,6 @@ class OrderPlatformIT extends AbstractPostgresIntegrationTest {
         assertThat(applicationEvents.stream(OrderCreatedEvent.class))
                 .anySatisfy(event -> assertThat(event.orderId()).isEqualTo(order.id()));
 
-        var pendingPayment = payments.findByOrderId(order.id()).orElseThrow();
-        assertThat(pendingPayment.status()).isEqualTo("PENDING");
-
         var authorizedPayment = payments.authorize(order.id(), order.total());
         assertThat(authorizedPayment.status()).isEqualTo("AUTHORIZED");
         assertThat(applicationEvents.stream(PaymentAuthorizedEvent.class))

@@ -119,8 +119,7 @@ a:hover {
 }
 
 a:focus-visible,
-button:focus-visible,
-summary:focus-visible {
+button:focus-visible {
   outline: 3px solid var(--amber);
   outline-offset: 3px;
   border-radius: 5px;
@@ -140,26 +139,13 @@ dd {
   color: var(--muted);
 }
 
-code,
-kbd {
+code {
   padding: 0.12rem 0.32rem;
   border-radius: 5px;
   background: var(--code-bg);
   color: var(--text);
   font-family: "Cascadia Code", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   font-size: 0.91em;
-}
-
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-  border: 0;
 }
 
 .skip-link {

@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.jayway.jsonpath.JsonPath;
+import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -71,47 +73,113 @@ class OrderPlatformRestIT extends AbstractPostgresIntegrationTest {
     }
 
     @Test
-    void returnsProblemDetailsForValidationFailures() throws Exception {
+    void returnsProblemDetailsForRequestValidationFailures() throws Exception {
+        assertValidationProblem(post("/customers")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {
+                          "email": "not-an-email",
+                          "fullName": "A"
+                        }
+                        """));
+
+        assertValidationProblem(post("/pricing/quote")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        { "items": [] }
+                        """));
+
+        assertValidationProblem(post("/orders")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {
+                          "customerId": "%s",
+                          "items": []
+                        }
+                        """.formatted(UUID.randomUUID())));
+
+        assertValidationProblem(post("/payments/authorize")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {
+                          "orderId": "%s",
+                          "amount": { "amount": -1.00, "currency": "EU1" }
+                        }
+                        """.formatted(UUID.randomUUID())));
+    }
+
+    @Test
+    void returnsProblemDetailsForMalformedRequests() throws Exception {
         mockMvc.perform(post("/customers")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                  "email": "not-an-email",
-                                  "fullName": "A"
-                                }
-                                """))
+                        .content("{"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
-                .andExpect(jsonPath("$.type").value("https://example.com/problems/validation-failed"))
-                .andExpect(jsonPath("$.title").value("Validation failed"))
+                .andExpect(jsonPath("$.type").value("https://example.com/problems/malformed-request"))
+                .andExpect(jsonPath("$.title").value("Malformed request"))
                 .andExpect(jsonPath("$.status").value(400));
     }
 
     @Test
-    void returnsProblemDetailsForNotFoundFailures() throws Exception {
-        mockMvc.perform(get("/orders/{orderId}", UUID.randomUUID()))
-                .andExpect(status().isNotFound())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
-                .andExpect(jsonPath("$.type").value("https://example.com/problems/resource-not-found"))
-                .andExpect(jsonPath("$.title").value("Resource not found"))
-                .andExpect(jsonPath("$.status").value(404));
+    void returnsProblemDetailsForInvalidLookupIdentifiers() throws Exception {
+        for (String path : List.of(
+                "/customers/not-a-uuid",
+                "/orders/not-a-uuid",
+                "/payments/not-a-uuid")) {
+            mockMvc.perform(get(path))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+                    .andExpect(jsonPath("$.title").value("Validation failed"))
+                    .andExpect(jsonPath("$.status").value(400));
+        }
+    }
+
+    @Test
+    void returnsProblemDetailsForLookupNotFoundFailures() throws Exception {
+        String missingId = UUID.randomUUID().toString();
+
+        for (String path : List.of(
+                "/customers/" + missingId,
+                "/orders/" + missingId,
+                "/payments/" + missingId)) {
+            assertNotFoundProblem(get(path));
+        }
     }
 
     @Test
     void returnsProblemDetailsForMissingProducts() throws Exception {
-        mockMvc.perform(post("/pricing/quote")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                  "items": [
-                                    { "productCode": "SKU-MISSING", "quantity": 1 }
-                                  ]
-                                }
-                                """))
-                .andExpect(status().isNotFound())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
-                .andExpect(jsonPath("$.title").value("Resource not found"))
-                .andExpect(jsonPath("$.status").value(404));
+        assertNotFoundProblem(post("/pricing/quote")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {
+                          "items": [
+                            { "productCode": "SKU-MISSING", "quantity": 1 }
+                          ]
+                        }
+                        """));
+    }
+
+    @Test
+    void returnsProblemDetailsForMissingCommandResources() throws Exception {
+        assertNotFoundProblem(post("/orders")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {
+                          "customerId": "%s",
+                          "items": [
+                            { "productCode": "SKU-COFFEE-MUG", "quantity": 1 }
+                          ]
+                        }
+                        """.formatted(UUID.randomUUID())));
+
+        assertNotFoundProblem(post("/payments/authorize")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {
+                          "orderId": "%s",
+                          "amount": { "amount": 14.99, "currency": "EUR" }
+                        }
+                        """.formatted(UUID.randomUUID())));
     }
 
     @Test
@@ -205,6 +273,25 @@ class OrderPlatformRestIT extends AbstractPostgresIntegrationTest {
                 .andReturn();
 
         return new PaymentPayload(JsonPath.read(result.getResponse().getContentAsString(), "$.id"));
+    }
+
+    private void assertValidationProblem(MockHttpServletRequestBuilder request) throws Exception {
+        mockMvc.perform(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.type").value("https://example.com/problems/validation-failed"))
+                .andExpect(jsonPath("$.title").value("Validation failed"))
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errors").isNotEmpty());
+    }
+
+    private void assertNotFoundProblem(MockHttpServletRequestBuilder request) throws Exception {
+        mockMvc.perform(request)
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.type").value("https://example.com/problems/resource-not-found"))
+                .andExpect(jsonPath("$.title").value("Resource not found"))
+                .andExpect(jsonPath("$.status").value(404));
     }
 
     private String uniqueEmail() {

@@ -1,7 +1,6 @@
 package com.example.orderplatform.payments.api;
 
 import com.example.orderplatform.Money;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -29,11 +28,4 @@ public interface PaymentManagement {
      */
     PaymentSummary getPayment(UUID paymentId);
 
-    /**
-     * Finds the payment prepared for an order.
-     *
-     * @param orderId order identifier
-     * @return payment summary when one has been prepared
-     */
-    Optional<PaymentSummary> findByOrderId(UUID orderId);
 }

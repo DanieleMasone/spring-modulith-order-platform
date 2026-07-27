@@ -1,5 +1,6 @@
 package com.example.orderplatform.customers.infrastructure;
 
+import com.example.orderplatform.ResourceConflictException;
 import com.example.orderplatform.customers.api.CustomerSnapshot;
 import com.example.orderplatform.customers.application.CustomerStore;
 import com.example.orderplatform.customers.domain.CustomerRegistration;
@@ -7,6 +8,7 @@ import com.example.orderplatform.customers.domain.CustomerStatus;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,11 +26,6 @@ class JpaCustomerStore implements CustomerStore {
     }
 
     @Override
-    public Optional<CustomerSnapshot> findByEmail(String email) {
-        return customers.findByEmail(email).map(this::toSnapshot);
-    }
-
-    @Override
     public CustomerSnapshot saveNew(
             UUID id,
             CustomerRegistration registration,
@@ -41,7 +38,11 @@ class JpaCustomerStore implements CustomerStore {
                 status,
                 createdAt);
 
-        return toSnapshot(customers.save(customer));
+        try {
+            return toSnapshot(customers.saveAndFlush(customer));
+        } catch (DataIntegrityViolationException exception) {
+            throw new ResourceConflictException("A customer with this email already exists.");
+        }
     }
 
     private CustomerSnapshot toSnapshot(CustomerEntity customer) {

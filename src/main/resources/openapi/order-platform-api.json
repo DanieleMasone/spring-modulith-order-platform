@@ -63,6 +63,7 @@
               }
             }
           },
+          "400": { "$ref": "#/components/responses/Problem" },
           "404": { "$ref": "#/components/responses/Problem" }
         }
       }
@@ -138,6 +139,7 @@
               }
             }
           },
+          "400": { "$ref": "#/components/responses/Problem" },
           "404": { "$ref": "#/components/responses/Problem" }
         }
       }
@@ -186,6 +188,7 @@
               }
             }
           },
+          "400": { "$ref": "#/components/responses/Problem" },
           "404": { "$ref": "#/components/responses/Problem" }
         }
       }
@@ -262,7 +265,7 @@
           "id": { "type": "string", "format": "uuid" },
           "email": { "type": "string", "format": "email" },
           "fullName": { "type": "string" },
-          "status": { "type": "string", "enum": ["ACTIVE", "SUSPENDED"] }
+          "status": { "type": "string", "enum": ["ACTIVE"] }
         }
       },
       "PricingQuoteRequest": {
@@ -336,7 +339,7 @@
         "properties": {
           "id": { "type": "string", "format": "uuid" },
           "customerId": { "type": "string", "format": "uuid" },
-          "status": { "type": "string", "enum": ["SUBMITTED", "CANCELLED"] },
+          "status": { "type": "string", "enum": ["SUBMITTED"] },
           "total": { "$ref": "#/components/schemas/Money" },
           "lines": {
             "type": "array",
@@ -376,7 +379,7 @@
         "properties": {
           "id": { "type": "string", "format": "uuid" },
           "orderId": { "type": "string", "format": "uuid" },
-          "status": { "type": "string", "enum": ["PENDING", "AUTHORIZED", "DECLINED"] },
+          "status": { "type": "string", "enum": ["PENDING", "AUTHORIZED"] },
           "amount": { "$ref": "#/components/schemas/Money" },
           "createdAt": { "type": "string", "format": "date-time" },
           "authorizedAt": { "type": "string", "format": "date-time", "nullable": true }
@@ -390,7 +393,7 @@
           "recipient": { "type": "string" },
           "channel": { "type": "string", "enum": ["EMAIL", "WEBHOOK"] },
           "type": { "type": "string" },
-          "status": { "type": "string", "enum": ["READY", "SENT"] },
+          "status": { "type": "string", "enum": ["READY"] },
           "createdAt": { "type": "string", "format": "date-time" }
         }
       },
@@ -399,7 +402,13 @@
         "required": ["amount", "currency"],
         "properties": {
           "amount": { "type": "number", "minimum": 0, "multipleOf": 0.01 },
-          "currency": { "type": "string", "minLength": 3, "maxLength": 3, "example": "EUR" }
+          "currency": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 3,
+            "pattern": "^[A-Za-z]{3}$",
+            "example": "EUR"
+          }
         }
       },
       "ProblemDetail": {
@@ -409,7 +418,12 @@
           "title": { "type": "string" },
           "status": { "type": "integer", "format": "int32" },
           "detail": { "type": "string" },
-          "instance": { "type": "string", "format": "uri" }
+          "instance": { "type": "string", "format": "uri" },
+          "errors": {
+            "type": "array",
+            "description": "Field validation messages when request validation fails.",
+            "items": { "type": "string" }
+          }
         }
       }
     }

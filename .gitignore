@@ -2,17 +2,8 @@
 target/
 *.class
 
-# Maven-generated OpenAPI, JaCoCo and Pages artifacts live under target/.
-target/generated-sources/openapi/
-target/generated-docs/openapi/
-target/site/jacoco/
-target/pages/
-
 # Maven wrapper remains versioned; local Maven state does not.
 .mvn/wrapper/maven-wrapper.jar.tmp
-
-# Generated documentation and Pages content
-spring-modulith-docs/
 
 # IDEs
 .idea/

@@ -3,7 +3,7 @@
 [![CI](https://github.com/DanieleMasone/spring-modulith-order-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/DanieleMasone/spring-modulith-order-platform/actions/workflows/ci.yml)
 ![Java](https://img.shields.io/badge/Java-21-000?logo=openjdk)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.1.0-6DB33F?logo=springboot)
-![Spring Modulith](https://img.shields.io/badge/Spring_Modulith-2.0.6-6DB33F)
+![Spring Modulith](https://img.shields.io/badge/Spring_Modulith-2.1.0-6DB33F)
 ![OpenAPI](https://img.shields.io/badge/OpenAPI-Contract_First-85EA2D?logo=openapiinitiative)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1?logo=postgresql)
 

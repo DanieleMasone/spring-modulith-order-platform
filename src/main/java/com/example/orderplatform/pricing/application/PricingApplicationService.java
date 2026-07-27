@@ -7,7 +7,6 @@ import com.example.orderplatform.pricing.api.PricedLine;
 import com.example.orderplatform.pricing.api.PricingQuote;
 import com.example.orderplatform.pricing.api.PricingRequest;
 import com.example.orderplatform.pricing.api.PricingService;
-import com.example.orderplatform.pricing.domain.CatalogCurrencyPolicy;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,8 +41,6 @@ public class PricingApplicationService implements PricingService {
         List<PricedLine> lines = requests.stream()
                 .map(this::price)
                 .toList();
-        CatalogCurrencyPolicy.requireSingleCurrency(lines.stream().map(PricedLine::lineTotal).toList());
-
         Money total = lines.stream()
                 .map(PricedLine::lineTotal)
                 .reduce((left, right) -> left.add(right))

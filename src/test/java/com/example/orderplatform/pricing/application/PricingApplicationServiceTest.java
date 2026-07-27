@@ -70,6 +70,22 @@ class PricingApplicationServiceTest {
                 .hasMessageContaining("SKU-INACTIVE");
     }
 
+    @Test
+    void rejectsCatalogItemsWithMixedCurrencies() {
+        when(catalog.findActivePrice("SKU-EUR"))
+                .thenReturn(Optional.of(new CatalogPrice("SKU-EUR", Money.of(new BigDecimal("10.00"), "EUR"))));
+        when(catalog.findActivePrice("SKU-USD"))
+                .thenReturn(Optional.of(new CatalogPrice("SKU-USD", Money.of(new BigDecimal("10.00"), "USD"))));
+
+        var service = new PricingApplicationService(catalog);
+
+        assertThatThrownBy(() -> service.quoteFor(List.of(
+                new PricingRequest("SKU-EUR", 1),
+                new PricingRequest("SKU-USD", 1))))
+                .isInstanceOf(BusinessRuleViolationException.class)
+                .hasMessageContaining("same currency");
+    }
+
     private CatalogPrice catalogItem(String productCode, String unitAmount) {
         return new CatalogPrice(productCode, Money.of(new BigDecimal(unitAmount), "EUR"));
     }

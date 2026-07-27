@@ -26,7 +26,7 @@ public class CustomerEntity {
     protected CustomerEntity() {
     }
 
-    public CustomerEntity(UUID id, String email, String fullName, CustomerStatus status, OffsetDateTime createdAt) {
+    CustomerEntity(UUID id, String email, String fullName, CustomerStatus status, OffsetDateTime createdAt) {
         this.id = id;
         this.email = email;
         this.fullName = fullName;

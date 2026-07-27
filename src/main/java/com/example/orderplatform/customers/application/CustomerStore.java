@@ -21,14 +21,6 @@ public interface CustomerStore {
     Optional<CustomerSnapshot> findById(UUID customerId);
 
     /**
-     * Finds a customer by normalized email address.
-     *
-     * @param email normalized email address
-     * @return customer snapshot when present
-     */
-    Optional<CustomerSnapshot> findByEmail(String email);
-
-    /**
      * Persists a new customer registration.
      *
      * @param id generated customer identifier
@@ -36,6 +28,7 @@ public interface CustomerStore {
      * @param status initial customer status
      * @param createdAt creation timestamp
      * @return saved customer snapshot
+     * @throws com.example.orderplatform.ResourceConflictException when the email is already registered
      */
     CustomerSnapshot saveNew(UUID id, CustomerRegistration registration, CustomerStatus status, OffsetDateTime createdAt);
 }

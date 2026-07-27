@@ -1,7 +1,7 @@
 package com.example.orderplatform.customers.application;
 
-import com.example.orderplatform.ResourceNotFoundException;
 import com.example.orderplatform.ResourceConflictException;
+import com.example.orderplatform.ResourceNotFoundException;
 import com.example.orderplatform.customers.api.CustomerDirectory;
 import com.example.orderplatform.customers.api.CustomerSnapshot;
 import com.example.orderplatform.customers.domain.CustomerRegistration;
@@ -34,10 +34,6 @@ public class CustomerApplicationService implements CustomerDirectory {
      */
     public CustomerSnapshot createCustomer(String fullName, String email) {
         CustomerRegistration registration = CustomerRegistration.register(fullName, email);
-        customers.findByEmail(registration.email()).ifPresent(existing -> {
-            throw new ResourceConflictException("A customer with this email already exists.");
-        });
-
         return customers.saveNew(
                 UUID.randomUUID(),
                 registration,

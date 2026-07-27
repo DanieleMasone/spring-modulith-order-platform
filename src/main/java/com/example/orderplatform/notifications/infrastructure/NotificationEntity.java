@@ -39,10 +39,6 @@ public class NotificationEntity {
         this.createdAt = createdAt;
     }
 
-    public static NotificationEntity ready(String recipient, String channel, String type, String payload) {
-        return ready(new NotificationDraft(recipient, channel, type, payload));
-    }
-
     public static NotificationEntity ready(NotificationDraft draft) {
         return new NotificationEntity(
                 UUID.randomUUID(),

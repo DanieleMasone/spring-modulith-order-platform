@@ -1,6 +1,7 @@
 package com.example.orderplatform.notifications.domain;
 
 import com.example.orderplatform.BusinessRuleViolationException;
+import java.util.Locale;
 
 /**
  * Validated notification intent before it is persisted.
@@ -17,8 +18,8 @@ public record NotificationDraft(String recipient, String channel, String type, S
 
     public NotificationDraft {
         recipient = requireText(recipient, "Notification recipient is required.");
-        channel = requireText(channel, "Notification channel is required.").toUpperCase();
-        type = requireText(type, "Notification type is required.").toUpperCase();
+        channel = requireText(channel, "Notification channel is required.").toUpperCase(Locale.ROOT);
+        type = requireText(type, "Notification type is required.").toUpperCase(Locale.ROOT);
         payload = requireText(payload, "Notification payload is required.");
 
         if (!channel.equals("EMAIL") && !channel.equals("WEBHOOK")) {

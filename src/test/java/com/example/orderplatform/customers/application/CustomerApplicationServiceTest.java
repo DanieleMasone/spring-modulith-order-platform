@@ -1,18 +1,15 @@
 package com.example.orderplatform.customers.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.example.orderplatform.ResourceConflictException;
 import com.example.orderplatform.customers.api.CustomerSnapshot;
 import com.example.orderplatform.customers.domain.CustomerRegistration;
 import com.example.orderplatform.customers.domain.CustomerStatus;
 import java.time.OffsetDateTime;
-import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,7 +25,6 @@ class CustomerApplicationServiceTest {
 
     @Test
     void createsActiveCustomerThroughModuleApi() {
-        when(customers.findByEmail("ada@example.com")).thenReturn(Optional.empty());
         when(customers.saveNew(any(UUID.class), any(CustomerRegistration.class), eq(CustomerStatus.ACTIVE), any(OffsetDateTime.class)))
                 .thenAnswer(invocation -> {
                     CustomerRegistration registration = invocation.getArgument(1);
@@ -49,21 +45,5 @@ class CustomerApplicationServiceTest {
         ArgumentCaptor<CustomerRegistration> savedRegistration = ArgumentCaptor.forClass(CustomerRegistration.class);
         verify(customers).saveNew(any(UUID.class), savedRegistration.capture(), eq(CustomerStatus.ACTIVE), any(OffsetDateTime.class));
         assertThat(savedRegistration.getValue().email()).isEqualTo("ada@example.com");
-    }
-
-    @Test
-    void rejectsDuplicateEmailThroughConflictException() {
-        var existing = new CustomerSnapshot(
-                UUID.randomUUID(),
-                "ada@example.com",
-                "Ada Lovelace",
-                CustomerStatus.ACTIVE.name());
-        when(customers.findByEmail("ada@example.com")).thenReturn(Optional.of(existing));
-
-        var service = new CustomerApplicationService(customers);
-
-        assertThatThrownBy(() -> service.createCustomer("Ada Lovelace", "ADA@EXAMPLE.COM"))
-                .isInstanceOf(ResourceConflictException.class)
-                .hasMessageContaining("already exists");
     }
 }

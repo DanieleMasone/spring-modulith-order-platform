@@ -9,7 +9,6 @@ import com.example.orderplatform.payments.api.PaymentManagement;
 import com.example.orderplatform.payments.api.PaymentSummary;
 import com.example.orderplatform.payments.domain.Payment;
 import java.time.OffsetDateTime;
-import java.util.Optional;
 import java.util.UUID;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -90,18 +89,6 @@ public class PaymentApplicationService implements PaymentManagement {
         return payments.findById(paymentId)
                 .map(this::toSummary)
                 .orElseThrow(() -> new ResourceNotFoundException("Payment " + paymentId + " was not found."));
-    }
-
-    /**
-     * Finds the payment prepared for an order.
-     *
-     * @param orderId order identifier
-     * @return payment summary when a payment exists
-     */
-    @Override
-    @Transactional(readOnly = true)
-    public Optional<PaymentSummary> findByOrderId(UUID orderId) {
-        return payments.findByOrderId(orderId).map(this::toSummary);
     }
 
     private PaymentSummary toSummary(Payment payment) {

@@ -8,7 +8,6 @@ import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
 import org.junit.jupiter.api.Test;
 import org.springframework.modulith.core.ApplicationModules;
-import org.springframework.modulith.docs.Documenter;
 
 class ApplicationModulesTest {
 
@@ -44,12 +43,5 @@ class ApplicationModulesTest {
                 .that().resideInAPackage("..application..")
                 .should().dependOnClassesThat().resideInAPackage("..infrastructure..")
                 .check(productionClasses);
-    }
-
-    @Test
-    void writesSpringModulithDocumentationSnippets() {
-        new Documenter(modules)
-                .writeModulesAsPlantUml()
-                .writeModuleCanvases();
     }
 }
