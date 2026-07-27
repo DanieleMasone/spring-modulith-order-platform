@@ -241,7 +241,7 @@
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>copy-site-index</id>
+                        <id>copy-site-sources</id>
                         <phase>verify</phase>
                         <goals>
                             <goal>copy-resources</goal>
@@ -325,32 +325,6 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>generate-user-guide-page</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <mkdir dir="${project.build.directory}/build-tools"/>
-                                <javac srcdir="${project.basedir}/src/build/java"
-                                       destdir="${project.build.directory}/build-tools"
-                                       includeantruntime="false"
-                                       encoding="UTF-8"
-                                       release="${java.version}"/>
-                                <java classname="com.example.orderplatform.build.UserGuidePageGenerator"
-                                      fork="true"
-                                      failonerror="true">
-                                    <classpath>
-                                        <pathelement location="${project.build.directory}/build-tools"/>
-                                    </classpath>
-                                    <arg value="${project.basedir}/docs/user-guide.md"/>
-                                    <arg value="${project.build.directory}/pages/user-guide/index.html"/>
-                                </java>
-                            </target>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>verify-generated-artifacts</id>
                         <phase>verify</phase>
                         <goals>
@@ -363,6 +337,8 @@
                                 <available file="${project.build.directory}/generated-docs/openapi/index.html" property="openapi.docs.exists"/>
                                 <available file="${project.build.directory}/generated-docs/openapi/openapi.json" property="openapi.json.exists"/>
                                 <available file="${project.build.directory}/pages/index.html" property="pages.index.exists"/>
+                                <available file="${project.build.directory}/pages/assets/site.css" property="pages.styles.exists"/>
+                                <available file="${project.build.directory}/pages/assets/site.js" property="pages.scripts.exists"/>
                                 <available file="${project.build.directory}/pages/user-guide/index.html" property="pages.user-guide.exists"/>
                                 <available file="${project.build.directory}/pages/jacoco/index.html" property="pages.jacoco.exists"/>
                                 <available file="${project.build.directory}/pages/javadoc/index.html" property="pages.javadoc.exists"/>
@@ -373,7 +349,9 @@
                                 <fail unless="openapi.docs.exists" message="OpenAPI HTML documentation was not generated."/>
                                 <fail unless="openapi.json.exists" message="OpenAPI JSON was not copied to generated docs."/>
                                 <fail unless="pages.index.exists" message="GitHub Pages index was not generated."/>
-                                <fail unless="pages.user-guide.exists" message="User Guide was not generated for GitHub Pages."/>
+                                <fail unless="pages.styles.exists" message="Shared GitHub Pages styles were not copied."/>
+                                <fail unless="pages.scripts.exists" message="Shared GitHub Pages scripts were not copied."/>
+                                <fail unless="pages.user-guide.exists" message="User Guide was not copied to GitHub Pages."/>
                                 <fail unless="pages.jacoco.exists" message="JaCoCo report was not copied to GitHub Pages."/>
                                 <fail unless="pages.javadoc.exists" message="Javadoc was not copied to GitHub Pages."/>
                                 <fail unless="pages.openapi.exists" message="OpenAPI docs were not copied to GitHub Pages."/>

@@ -2,14 +2,14 @@
 
 [![CI](https://github.com/DanieleMasone/spring-modulith-order-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/DanieleMasone/spring-modulith-order-platform/actions/workflows/ci.yml)
 ![Java](https://img.shields.io/badge/Java-21-000?logo=openjdk)
-![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.x-6DB33F?logo=springboot)
-![Spring Modulith](https://img.shields.io/badge/Spring_Modulith-2.x-6DB33F)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.1.0-6DB33F?logo=springboot)
+![Spring Modulith](https://img.shields.io/badge/Spring_Modulith-2.0.6-6DB33F)
 ![OpenAPI](https://img.shields.io/badge/OpenAPI-Contract_First-85EA2D?logo=openapiinitiative)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1?logo=postgresql)
 
 Production-oriented modular monolith for order management. The repository demonstrates modular design, contract-first APIs, domain events, architecture governance, reliable PostgreSQL persistence and automated documentation without adding distributed infrastructure that this use case does not need.
 
-For local setup, API examples and troubleshooting, see the [User Guide](docs/user-guide.md) or the [published User Guide](https://danielemasone.github.io/spring-modulith-order-platform/user-guide/).
+For local setup, API examples, architecture details and troubleshooting, see the [published User Guide](https://danielemasone.github.io/spring-modulith-order-platform/user-guide/).
 
 ## Architecture
 
@@ -97,7 +97,7 @@ GET  /notifications
 
 The contract also exposes read endpoints for customer, order and payment lookup. Validation, not-found, conflict and business-rule failures are returned as RFC7807 `ProblemDetail` responses.
 
-See the [User Guide](docs/user-guide.md) for practical cURL examples.
+See the [User Guide](https://danielemasone.github.io/spring-modulith-order-platform/user-guide/) for practical cURL examples.
 
 ## Testing Strategy
 
@@ -113,7 +113,7 @@ The project intentionally has no H2 dependency.
 
 ## Generated Documentation
 
-Maven is the single source of truth. Running `./mvnw clean verify` generates the reports and assembles the Pages artifact:
+Maven is the single assembly path. Running `./mvnw clean verify` copies the maintained landing page, HTML User Guide and shared site assets, generates the reports and assembles the Pages artifact:
 
 * [GitHub Pages landing page](https://danielemasone.github.io/spring-modulith-order-platform/)
 * [User Guide](https://danielemasone.github.io/spring-modulith-order-platform/user-guide/)
@@ -122,7 +122,7 @@ Maven is the single source of truth. Running `./mvnw clean verify` generates the
 * [Javadoc](https://danielemasone.github.io/spring-modulith-order-platform/javadoc/)
 * [JaCoCo coverage](https://danielemasone.github.io/spring-modulith-order-platform/jacoco/)
 
-GitHub Pages publishes only `target/pages`. Generated reports and generated OpenAPI sources are not committed.
+The maintained site sources are `src/site/index.html`, `src/site/user-guide/index.html` and `src/site/assets/`. GitHub Pages publishes only `target/pages`; generated reports, copied site output and generated OpenAPI sources are not committed.
 
 ## Local Development
 
@@ -134,7 +134,7 @@ docker compose up -d
 ./mvnw spring-boot:run
 ```
 
-The [User Guide](docs/user-guide.md) contains the full local workflow, sample requests and troubleshooting notes. Maven publishes the same guide to [GitHub Pages](https://danielemasone.github.io/spring-modulith-order-platform/user-guide/).
+The [published User Guide](https://danielemasone.github.io/spring-modulith-order-platform/user-guide/) contains the full local workflow, sample requests and troubleshooting notes. Maven copies its maintained HTML source into the Pages artifact.
 
 ## Docker Usage
 

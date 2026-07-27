@@ -38,9 +38,11 @@ Maven is the source of truth. `./mvnw clean verify` must generate:
 * `target/pages/`
 * `target/pages/user-guide/index.html`
 
-Maintain only `src/site/index.html` for the landing page. Keep `docs/user-guide.md` as the manually maintained User Guide source. Maven publishes that Markdown guide into `target/pages/user-guide/`. Do not create or commit duplicate maintained HTML pages or generated User Guide HTML.
+Maintain `src/site/index.html` as the landing page and `src/site/user-guide/index.html` as the single User Guide source. Shared visual and interaction assets live under `src/site/assets/`. Maven copies those maintained static sources into `target/pages/`, including the User Guide under `target/pages/user-guide/`.
 
-Manually maintained Markdown under `docs/` is allowed when it provides practical guidance that is not duplicated from generated OpenAPI, Javadoc or JaCoCo reports. OpenAPI HTML, Javadoc, JaCoCo and rendered User Guide HTML remain Maven-generated artifacts and must not be committed.
+Do not maintain a duplicate Markdown User Guide or a second HTML copy. The HTML under `src/site` is source; the copied HTML, OpenAPI HTML, Javadoc and JaCoCo reports under `target` are generated build artifacts and must not be committed.
+
+The landing page and User Guide must share the design assets, remain usable from 320px upward, support keyboard navigation and visible focus, persist light/dark theme selection, and avoid page-level horizontal overflow. Keep all internal Pages links relative so they work under the `/spring-modulith-order-platform/` project path. When documentation links or source paths change, verify every required Pages entry point during Maven `verify` and in the CI artifact check.
 
 ## Testing Policy
 
@@ -58,7 +60,7 @@ The CI workflow must:
 * Verify generated artifacts.
 * Validate Docker Compose.
 * Build the Docker image after tests pass.
-* Publish only `target/pages`, including the User Guide under `target/pages/user-guide/` and Javadoc under `target/pages/javadoc/`, to GitHub Pages.
+* Publish only `target/pages`, including shared site assets, the User Guide under `target/pages/user-guide/` and Javadoc under `target/pages/javadoc/`, to GitHub Pages.
 
 Avoid duplicate Maven executions and unnecessary matrix builds.
 

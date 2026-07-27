@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Setup, API workflow, architecture, testing and troubleshooting guide for Spring Modulith Order Platform.">
+  <meta name="theme-color" content="#f6f8fb">
+  <title>User Guide | Spring Modulith Order Platform</title>
+  <link rel="stylesheet" href="../assets/site.css">
+  <script src="../assets/site.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+
+<header class="site-header">
+  <nav class="site-nav" aria-label="Documentation navigation">
+    <a class="brand" href="../" aria-label="Back to Spring Modulith Order Platform landing page">
+      <span class="brand-mark" aria-hidden="true">SM</span>
+      <span class="brand-text">Spring Modulith Order Platform</span>
+    </a>
+    <div class="nav-controls">
+      <button class="icon-button" type="button" data-theme-toggle aria-pressed="false" aria-label="Switch color theme">
+        <span class="theme-icon" aria-hidden="true"></span>
+      </button>
+      <button class="icon-button menu-toggle" type="button" data-nav-toggle aria-controls="guide-links" aria-expanded="false" aria-label="Open navigation">
+        <span class="menu-icon" aria-hidden="true"></span>
+      </button>
+    </div>
+    <ul class="nav-links" id="guide-links" data-nav-list data-open="false">
+      <li><a href="./" aria-current="page">User Guide</a></li>
+      <li><a href="../openapi/">OpenAPI</a></li>
+      <li><a href="../openapi/openapi.json">OpenAPI JSON</a></li>
+      <li><a href="../javadoc/">Javadoc</a></li>
+      <li><a href="../jacoco/">JaCoCo</a></li>
+      <li><a href="https://github.com/DanieleMasone/spring-modulith-order-platform">GitHub</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main class="guide-page" id="content">
+  <header class="guide-hero" id="top">
+    <span class="eyebrow">Project documentation</span>
+    <h1>Order Platform User Guide</h1>
+    <p class="lead">Set up the application, exercise the complete order workflow and understand the architectural and quality constraints that keep this modular monolith credible.</p>
+    <div class="guide-meta" aria-label="Guide scope">
+      <span>Java 21</span>
+      <span>Spring Boot 4.1</span>
+      <span>Spring Modulith 2.0</span>
+      <span>PostgreSQL 17</span>
+    </div>
+  </header>
+
+  <div class="guide-layout">
+    <nav class="guide-toc" aria-labelledby="toc-title">
+      <h2 id="toc-title">On this page</h2>
+      <ol>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#local-setup">Local setup</a></li>
+        <li><a href="#api-workflow">API workflow</a></li>
+        <li><a href="#api-examples">API examples</a></li>
+        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#testing-quality">Testing and quality</a></li>
+        <li><a href="#generated-docs">Generated documentation</a></li>
+        <li><a href="#troubleshooting">Troubleshooting</a></li>
+      </ol>
+    </nav>
+
+    <article class="guide-content">
+      <section class="guide-section" id="overview" aria-labelledby="overview-title">
+        <h2 id="overview-title">Overview</h2>
+        <p>Spring Modulith Order Platform is a production-oriented order management backend. It is deployed as one Spring Boot application while keeping customers, pricing, orders, payments and notifications as explicit business modules.</p>
+        <p>Spring Modulith verifies allowed module dependencies and named public interfaces. Inside each module, a pragmatic ports-and-adapters approach keeps domain rules independent, lets application services orchestrate use cases and confines JPA and Spring Data details to infrastructure adapters.</p>
+        <div class="callout">
+          <p><strong>Scope:</strong> this guide covers operation and architecture. The generated <a href="../openapi/">OpenAPI documentation</a> remains the authoritative REST contract.</p>
+        </div>
+      </section>
+
+      <section class="guide-section" id="prerequisites" aria-labelledby="prerequisites-title">
+        <h2 id="prerequisites-title">Prerequisites</h2>
+        <p>The Maven wrapper is versioned with the repository, so a separate Maven installation is not required.</p>
+        <dl class="requirements">
+          <div>
+            <dt>Java</dt>
+            <dd>JDK 21 available through <code>JAVA_HOME</code> and the command line.</dd>
+          </div>
+          <div>
+            <dt>Containers</dt>
+            <dd>Docker Engine or Docker Desktop with Docker Compose v2.</dd>
+          </div>
+          <div>
+            <dt>Maven</dt>
+            <dd><code>./mvnw</code> on Unix-like systems or <code>.\mvnw.cmd</code> on Windows.</dd>
+          </div>
+          <div>
+            <dt>Port 5432</dt>
+            <dd>PostgreSQL host port; configurable through <code>DB_PORT</code>.</dd>
+          </div>
+          <div>
+            <dt>Port 8080</dt>
+            <dd>Default HTTP port for the Spring Boot application.</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="guide-section" id="local-setup" aria-labelledby="local-setup-title">
+        <h2 id="local-setup-title">Local setup</h2>
+        <ol class="steps">
+          <li>
+            <div class="step-content">
+              <h3>Start PostgreSQL</h3>
+              <p>Launch the PostgreSQL 17 service and wait for its health check.</p>
+              <pre><code>docker compose up -d</code></pre>
+            </div>
+          </li>
+          <li>
+            <div class="step-content">
+              <h3>Verify the project</h3>
+              <p>Generate the API contract, compile, run unit and PostgreSQL integration tests, verify module boundaries and assemble all documentation under <code>target/pages</code>.</p>
+              <pre><code>./mvnw clean verify</code></pre>
+            </div>
+          </li>
+          <li>
+            <div class="step-content">
+              <h3>Run the application</h3>
+              <p>Start the verified application against the Compose database. The API listens on port <code>8080</code>.</p>
+              <pre><code>./mvnw spring-boot:run</code></pre>
+            </div>
+          </li>
+        </ol>
+        <p>On Windows PowerShell, replace <code>./mvnw</code> with <code>.\mvnw.cmd</code>. The local database name, username and password are all <code>order_platform</code>.</p>
+      </section>
+
+      <section class="guide-section" id="api-workflow" aria-labelledby="api-workflow-title">
+        <h2 id="api-workflow-title">API workflow</h2>
+        <p>The realistic happy path crosses every business module while preserving the distinction between synchronous validation and event-driven follow-up work.</p>
+        <ol class="workflow">
+          <li>
+            <strong>Create customer</strong>
+            <span>Registers an active customer and returns its UUID.</span>
+          </li>
+          <li>
+            <strong>Request quote</strong>
+            <span>Prices a basket from the seeded catalog.</span>
+          </li>
+          <li>
+            <strong>Create order</strong>
+            <span>Validates the customer and products, then submits the order.</span>
+          </li>
+          <li>
+            <strong>Authorize payment</strong>
+            <span>Matches the order total and authorizes its pending payment.</span>
+          </li>
+          <li>
+            <strong>Inspect notifications</strong>
+            <span>Lists intents created from order and payment events.</span>
+          </li>
+        </ol>
+        <p>The seed catalog includes <code>SKU-COFFEE-MUG</code> at 14.99 EUR, <code>SKU-NOTEBOOK</code> at 19.99 EUR, <code>SKU-DESK-LAMP</code> at 49.99 EUR and <code>SKU-BACKPACK</code> at 89.00 EUR.</p>
+      </section>
+
+      <section class="guide-section" id="api-examples" aria-labelledby="api-examples-title">
+        <h2 id="api-examples-title">API examples</h2>
+        <p>These requests match the field names, paths and payloads in the source OpenAPI contract. Run them after the application starts. The examples use POSIX line continuation. In PowerShell, invoke <code>curl.exe</code> and run each request on one line or replace each trailing backslash with a backtick.</p>
+
+        <h3>1. Create a customer</h3>
+        <p>A successful request returns <code>201 Created</code>. Keep the response <code>id</code> for order creation.</p>
+        <pre><code>curl -i -X POST http://localhost:8080/customers \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "ada.lovelace@example.com",
+    "fullName": "Ada Lovelace"
+  }'</code></pre>
+
+        <h3>2. Quote the basket</h3>
+        <p>This seeded basket returns a total of <code>49.97 EUR</code>.</p>
+        <pre><code>curl -i -X POST http://localhost:8080/pricing/quote \
+  -H "Content-Type: application/json" \
+  -d '{
+    "items": [
+      { "productCode": "SKU-COFFEE-MUG", "quantity": 2 },
+      { "productCode": "SKU-NOTEBOOK", "quantity": 1 }
+    ]
+  }'</code></pre>
+
+        <h3>3. Create the order</h3>
+        <p>Replace <code>&lt;customer-id&gt;</code> with the UUID returned by the first request. A successful request returns <code>201 Created</code> and an order <code>id</code>.</p>
+        <pre><code>curl -i -X POST http://localhost:8080/orders \
+  -H "Content-Type: application/json" \
+  -d '{
+    "customerId": "&lt;customer-id&gt;",
+    "items": [
+      { "productCode": "SKU-COFFEE-MUG", "quantity": 2 },
+      { "productCode": "SKU-NOTEBOOK", "quantity": 1 }
+    ]
+  }'</code></pre>
+
+        <h3>4. Authorize payment</h3>
+        <p>Replace <code>&lt;order-id&gt;</code> with the submitted order UUID. The amount and currency must match the order total.</p>
+        <pre><code>curl -i -X POST http://localhost:8080/payments/authorize \
+  -H "Content-Type: application/json" \
+  -d '{
+    "orderId": "&lt;order-id&gt;",
+    "amount": {
+      "amount": 49.97,
+      "currency": "EUR"
+    }
+  }'</code></pre>
+
+        <h3>5. Inspect notifications</h3>
+        <p>The list contains records for the committed order and authorized payment.</p>
+        <pre><code>curl -i http://localhost:8080/notifications</code></pre>
+
+        <div class="callout">
+          <p>Validation, missing resources, duplicate customers and business-rule failures use RFC 7807 <code>application/problem+json</code> responses.</p>
+        </div>
+      </section>
+
+      <section class="guide-section" id="architecture" aria-labelledby="architecture-title">
+        <h2 id="architecture-title">Architecture</h2>
+        <p>The modules are direct packages below <code>com.example.orderplatform</code>. Each module uses only the <code>api</code>, <code>application</code>, <code>domain</code> and <code>infrastructure</code> packages it needs.</p>
+        <div class="module-list">
+          <div class="module-item">
+            <strong>Customers</strong>
+            <span>Owns customer identity and exposes lookup through its named API.</span>
+          </div>
+          <div class="module-item">
+            <strong>Pricing</strong>
+            <span>Owns catalog prices and produces validated basket quotes.</span>
+          </div>
+          <div class="module-item">
+            <strong>Orders</strong>
+            <span>Calls customer and pricing APIs synchronously before submission.</span>
+          </div>
+          <div class="module-item">
+            <strong>Payments</strong>
+            <span>Consumes <code>OrderCreatedEvent</code> and authorizes the pending amount.</span>
+          </div>
+          <div class="module-item">
+            <strong>Notifications</strong>
+            <span>Consumes order and payment events to record notification intents.</span>
+          </div>
+        </div>
+        <h3>Dependency boundaries</h3>
+        <ul>
+          <li>Named <code>api</code> interfaces are the only synchronous cross-module surface.</li>
+          <li>Domain events handle meaningful post-commit collaboration without a message broker.</li>
+          <li>Domain packages remain independent of Spring, JPA, generated API types and infrastructure.</li>
+          <li>Application services orchestrate use cases through outbound ports where persistence is a real technical boundary.</li>
+          <li>JPA entities, Spring Data repositories and persistence adapters remain private to <code>infrastructure</code>.</li>
+        </ul>
+      </section>
+
+      <section class="guide-section" id="testing-quality" aria-labelledby="testing-quality-title">
+        <h2 id="testing-quality-title">Testing and quality</h2>
+        <p><code>./mvnw clean verify</code> is the project quality gate and the only Maven build executed by CI.</p>
+        <ul>
+          <li><strong>Domain unit tests</strong> cover business rules and value objects without framework infrastructure.</li>
+          <li><strong>Application service tests</strong> verify use-case orchestration, conflicts and module API collaboration.</li>
+          <li><strong>Integration tests</strong> use Testcontainers with PostgreSQL for REST behavior, Flyway migrations, persistence and event consumers.</li>
+          <li><strong>Architecture tests</strong> run <code>ApplicationModules.verify()</code> and ArchUnit rules for module and package boundaries.</li>
+          <li><strong>JaCoCo</strong> generates coverage for non-generated production code.</li>
+          <li><strong>Javadoc and OpenAPI</strong> are generated and checked before Pages assembly.</li>
+          <li><strong>Artifact checks</strong> fail the build when a required Pages entry point or shared site asset is missing.</li>
+        </ul>
+        <p>H2 is intentionally excluded. Using PostgreSQL in local development and integration tests keeps migration and persistence behavior aligned.</p>
+      </section>
+
+      <section class="guide-section" id="generated-docs" aria-labelledby="generated-docs-title">
+        <h2 id="generated-docs-title">Generated documentation</h2>
+        <p>Maven assembles the complete static site under <code>target/pages</code>. GitHub Pages publishes that directory without running the Spring Boot application or PostgreSQL.</p>
+        <div class="resource-grid">
+          <a class="resource-link" href="../openapi/">
+            <strong>OpenAPI Documentation</strong>
+            <span>Human-readable REST contract.</span>
+          </a>
+          <a class="resource-link" href="../openapi/openapi.json">
+            <strong>OpenAPI JSON</strong>
+            <span>Machine-readable source contract.</span>
+          </a>
+          <a class="resource-link" href="../javadoc/">
+            <strong>Javadoc</strong>
+            <span>Generated Java API reference.</span>
+          </a>
+          <a class="resource-link" href="../jacoco/">
+            <strong>JaCoCo Coverage</strong>
+            <span>Generated HTML coverage report.</span>
+          </a>
+        </div>
+        <pre><code>target/pages/
+|-- index.html
+|-- assets/
+|-- user-guide/index.html
+|-- openapi/index.html
+|-- openapi/openapi.json
+|-- javadoc/index.html
+`-- jacoco/index.html</code></pre>
+        <p>Everything under <code>target</code> is generated output and must remain outside Git.</p>
+      </section>
+
+      <section class="guide-section" id="troubleshooting" aria-labelledby="troubleshooting-title">
+        <h2 id="troubleshooting-title">Troubleshooting</h2>
+        <dl class="troubleshooting-list">
+          <div>
+            <dt>Docker or PostgreSQL is not running</dt>
+            <dd>Start Docker, run <code>docker compose up -d</code>, then inspect <code>docker compose ps</code> and <code>docker compose logs postgres</code>.</dd>
+          </div>
+          <div>
+            <dt>Port 5432 is occupied</dt>
+            <dd>Use <code>DB_PORT=15432 docker compose up -d</code> on Unix or set <code>$env:DB_PORT="15432"</code> first in PowerShell. Point <code>spring.datasource.url</code> to the selected host port.</dd>
+          </div>
+          <div>
+            <dt>Port 8080 is occupied</dt>
+            <dd>Set <code>SERVER_PORT=8081</code> before starting Spring Boot, or stop the process already bound to port 8080.</dd>
+          </div>
+          <div>
+            <dt>Testcontainers cannot start Docker</dt>
+            <dd>Confirm the Docker daemon is reachable by the current user and that <code>docker info</code> succeeds before rerunning Maven.</dd>
+          </div>
+          <div>
+            <dt>Flyway reports a validation error</dt>
+            <dd>Do not rewrite an applied migration. Restore the original migration and add the next versioned migration for schema changes.</dd>
+          </div>
+          <div>
+            <dt>Generated documentation is missing</dt>
+            <dd>Run <code>./mvnw clean verify</code>. Do not create or edit files manually under <code>target/pages</code>.</dd>
+          </div>
+          <div>
+            <dt>The Maven wrapper is not executable</dt>
+            <dd>On Unix-like systems run <code>chmod +x mvnw</code>, then rerun the wrapper command.</dd>
+          </div>
+        </dl>
+        <a class="back-to-top" href="#top">Back to top</a>
+      </section>
+    </article>
+  </div>
+</main>
+
+<footer class="site-footer">
+  Maintained in <code>src/site/user-guide/index.html</code> and published by Maven. See the <a href="https://github.com/DanieleMasone/spring-modulith-order-platform">GitHub repository</a> for source and build configuration.
+</footer>
+</body>
+</html>
