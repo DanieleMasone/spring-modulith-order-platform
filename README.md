@@ -162,3 +162,9 @@ The repository intentionally excludes Kubernetes, microservices, Redis, Kafka, O
 * OpenAPI-first generation is limited to REST contracts. Internal module APIs remain hand-written records and interfaces so generated DTOs do not leak into the domain model.
 * PostgreSQL and Flyway are used in both runtime and integration tests to keep schema behavior realistic. H2 is deliberately excluded.
 * The project does not include an outbox, external broker or production notification adapters. The current notification module records notification intents inside the monolith.
+
+## License
+
+Released under the MIT License. See [LICENSE](LICENSE).
+
+Copyright (c) 2026 Daniele Masone.
