@@ -1,11 +1,8 @@
 # Spring Modulith Order Platform
 
-[![CI](https://github.com/DanieleMasone/spring-modulith-order-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/DanieleMasone/spring-modulith-order-platform/actions/workflows/ci.yml)
-![Java](https://img.shields.io/badge/Java-21-000?logo=openjdk)
-![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.1.0-6DB33F?logo=springboot)
-![Spring Modulith](https://img.shields.io/badge/Spring_Modulith-2.1.0-6DB33F)
-![OpenAPI](https://img.shields.io/badge/OpenAPI-Contract_First-85EA2D?logo=openapiinitiative)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1?logo=postgresql)
+[![CI](https://github.com/DanieleMasone/spring-modulith-order-platform/actions/workflows/ci.yml/badge.svg?branch=main&event=push)](https://github.com/DanieleMasone/spring-modulith-order-platform/actions/workflows/ci.yml)
+[![Coverage](https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Fdanielemasone.github.io%2Fspring-modulith-order-platform%2Fjacoco%2Fjacoco.xml&query=round%28%281000%20%2A%20number%28%2Freport%2Fcounter%5B%40type%3D%27LINE%27%5D%2F%40covered%29%29%20div%20%28number%28%2Freport%2Fcounter%5B%40type%3D%27LINE%27%5D%2F%40covered%29%20%2B%20number%28%2Freport%2Fcounter%5B%40type%3D%27LINE%27%5D%2F%40missed%29%29%29%20div%2010&label=coverage&suffix=%25&color=blue)](https://danielemasone.github.io/spring-modulith-order-platform/jacoco/)
+[![License](https://img.shields.io/github/license/DanieleMasone/spring-modulith-order-platform)](LICENSE)
 
 Production-oriented modular monolith for order management. The repository demonstrates modular design, contract-first APIs, domain events, architecture governance, reliable PostgreSQL persistence and automated documentation without adding distributed infrastructure that this use case does not need.
 
