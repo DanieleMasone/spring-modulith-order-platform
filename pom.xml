@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.1.0</version>
+        <version>4.1.1</version>
         <relativePath/>
     </parent>
 
@@ -19,12 +19,10 @@
 
     <properties>
         <java.version>21</java.version>
-        <spring-modulith.version>2.1.0</spring-modulith.version>
-        <testcontainers.version>1.21.4</testcontainers.version>
+        <spring-modulith.version>2.1.1</spring-modulith.version>
         <openapi-generator.version>7.23.0</openapi-generator.version>
-        <swagger-annotations.version>2.2.50</swagger-annotations.version>
+        <swagger-annotations.version>2.2.55</swagger-annotations.version>
         <jacoco.version>0.8.15</jacoco.version>
-        <maven-failsafe-plugin.version>3.5.6</maven-failsafe-plugin.version>
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <maven-antrun-plugin.version>3.2.0</maven-antrun-plugin.version>
     </properties>
@@ -35,13 +33,6 @@
                 <groupId>org.springframework.modulith</groupId>
                 <artifactId>spring-modulith-bom</artifactId>
                 <version>${spring-modulith.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.testcontainers</groupId>
-                <artifactId>testcontainers-bom</artifactId>
-                <version>${testcontainers.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -106,12 +97,12 @@
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>junit-jupiter</artifactId>
+            <artifactId>testcontainers-junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>postgresql</artifactId>
+            <artifactId>testcontainers-postgresql</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -198,7 +189,6 @@
             </plugin>
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>${maven-failsafe-plugin.version}</version>
                 <executions>
                     <execution>
                         <goals>

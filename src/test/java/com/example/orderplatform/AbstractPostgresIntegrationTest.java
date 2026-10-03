@@ -3,7 +3,7 @@ package com.example.orderplatform;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -12,7 +12,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 abstract class AbstractPostgresIntegrationTest {
 
     @Container
-    static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:17-alpine");
+    static final PostgreSQLContainer postgres = new PostgreSQLContainer("postgres:17-alpine");
 
     @DynamicPropertySource
     static void postgresProperties(DynamicPropertyRegistry registry) {
