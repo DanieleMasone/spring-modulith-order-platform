@@ -137,6 +137,8 @@ docker compose up -d
 
 The [published User Guide](https://danielemasone.github.io/spring-modulith-order-platform/user-guide/) contains the full local workflow, sample requests and troubleshooting notes. Maven copies its maintained HTML source into the Pages artifact.
 
+The operational `GET /actuator/health` endpoint reports only overall status, including PostgreSQL connectivity. All other management endpoints remain unexposed; health is separate from the business OpenAPI contract.
+
 ## Docker Usage
 
 Build verification should happen before image creation:

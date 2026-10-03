@@ -129,6 +129,9 @@
           </li>
         </ol>
         <p>On Windows PowerShell, replace <code>./mvnw</code> with <code>.\mvnw.cmd</code>. The local database name, username and password are all <code>order_platform</code>.</p>
+        <h3>Operational health</h3>
+        <pre><code>curl -i http://localhost:8080/actuator/health</code></pre>
+        <p>Only the health management endpoint is exposed. It returns overall status without component details, database addresses or credentials: <code>200</code> with <code>{"status":"UP"}</code> when healthy, or <code>503</code> with <code>{"status":"DOWN"}</code> when PostgreSQL cannot be reached. This operational endpoint is separate from the business OpenAPI contract.</p>
       </section>
 
       <section class="guide-section" id="api-workflow" aria-labelledby="api-workflow-title">

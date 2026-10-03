@@ -26,6 +26,24 @@ class OrderPlatformRestIT extends AbstractPostgresIntegrationTest {
     MockMvc mockMvc;
 
     @Test
+    void healthReportsOnlyStatusWithHealthyPostgres() throws Exception {
+        mockMvc.perform(get("/actuator/health"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("UP"))
+                .andExpect(jsonPath("$.length()").value(1));
+    }
+
+    @Test
+    void otherManagementEndpointsAreNotExposed() throws Exception {
+        for (String path : List.of("/actuator", "/actuator/env", "/actuator/configprops",
+                "/actuator/health/liveness", "/actuator/health/readiness",
+                "/actuator/beans", "/actuator/mappings", "/actuator/heapdump",
+                "/actuator/threaddump", "/actuator/loggers", "/actuator/metrics", "/actuator/info")) {
+            mockMvc.perform(get(path)).andExpect(status().isNotFound());
+        }
+    }
+
+    @Test
     void declaredEndpointsWorkEndToEnd() throws Exception {
         String customerId = createCustomer("Grace Hopper", uniqueEmail()).id();
 

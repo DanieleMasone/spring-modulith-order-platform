@@ -24,6 +24,20 @@ spring:
         schema-initialization:
           enabled: false
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+      discovery:
+        enabled: false
+  endpoint:
+    health:
+      probes:
+        enabled: false
+      show-details: never
+      show-components: never
+
 server:
   error:
     include-message: never

@@ -80,6 +80,11 @@
     }
 
     if (navToggle && navList) {
+      const desktopNavigation = window.matchMedia("(min-width: 880px)");
+      desktopNavigation.addEventListener("change", function () {
+        setNavigationOpen(false);
+      });
+
       navToggle.addEventListener("click", function () {
         setNavigationOpen(navToggle.getAttribute("aria-expanded") !== "true");
       });

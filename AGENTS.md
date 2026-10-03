@@ -49,6 +49,8 @@ The landing page and User Guide must share the design assets, remain usable from
 
 ## Testing Policy
 
+Keep management web exposure limited to Actuator health with no public component details. Use Boot's auto-configured DataSource health; keep management endpoints out of the business OpenAPI contract.
+
 * Unit tests cover business rules and value objects.
 * Integration tests use Testcontainers with PostgreSQL.
 * Do not add H2.

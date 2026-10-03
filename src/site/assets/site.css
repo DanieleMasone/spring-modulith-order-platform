@@ -139,6 +139,14 @@ dd {
   color: var(--muted);
 }
 
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
 code {
   padding: 0.12rem 0.32rem;
   border-radius: 5px;
