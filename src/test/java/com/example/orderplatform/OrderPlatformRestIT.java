@@ -109,6 +109,42 @@ class OrderPlatformRestIT extends AbstractPostgresIntegrationTest {
     }
 
     @Test
+    void rejectsNullBasketItemsAsMalformedRequests() throws Exception {
+        for (String path : List.of("/pricing/quote", "/orders")) {
+            for (String items : List.of("[null]",
+                    "[{\"productCode\":\"SKU-COFFEE-MUG\",\"quantity\":1},null]")) {
+                mockMvc.perform(post(path)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                        { "customerId": "%s", "items": %s }
+                                        """.formatted(UUID.randomUUID(), items)))
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+                        .andExpect(jsonPath("$.title").value("Malformed request"))
+                        .andExpect(jsonPath("$.status").value(400));
+            }
+        }
+    }
+
+    @Test
+    void rejectsSubCentPaymentAmountsWithoutAuthorizingThePayment() throws Exception {
+        String customerId = createCustomer("Dorothy Vaughan", uniqueEmail()).id();
+        String orderId = createOrder(customerId).id();
+
+        mockMvc.perform(post("/payments/authorize")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                { "orderId": "%s", "amount": { "amount": 49.974, "currency": "EUR" } }
+                                """.formatted(orderId)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.title").value("Business rule violation"))
+                .andExpect(jsonPath("$.status").value(400));
+
+        authorizePayment(orderId, "49.970");
+    }
+
+    @Test
     void returnsProblemDetailsForMalformedRequests() throws Exception {
         mockMvc.perform(post("/customers")
                         .contentType(MediaType.APPLICATION_JSON)

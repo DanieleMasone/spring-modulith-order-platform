@@ -1,5 +1,6 @@
 package com.example.orderplatform.payments.api;
 
+import com.example.orderplatform.BusinessRuleViolationException;
 import com.example.orderplatform.Money;
 import com.example.orderplatform.generated.api.PaymentsApi;
 import com.example.orderplatform.generated.model.PaymentAuthorizeRequest;
@@ -19,9 +20,14 @@ class PaymentRestController implements PaymentsApi {
 
     @Override
     public ResponseEntity<PaymentResponse> authorizePayment(PaymentAuthorizeRequest request) {
+        var amount = request.getAmount().getAmount();
+        // Enforce the contract before Money normalizes values for internal arithmetic.
+        if (amount.stripTrailingZeros().scale() > 2) {
+            throw new BusinessRuleViolationException("Payment amount must be a multiple of 0.01.");
+        }
         PaymentSummary payment = payments.authorize(
                 request.getOrderId(),
-                Money.of(request.getAmount().getAmount(), request.getAmount().getCurrency()));
+                Money.of(amount, request.getAmount().getCurrency()));
         return ResponseEntity.ok(toResponse(payment));
     }
 
