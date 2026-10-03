@@ -16,6 +16,13 @@ spring:
         format_sql: true
   jackson:
     default-property-inclusion: non_null
+  modulith:
+    events:
+      republish-outstanding-events-on-restart: true
+      completion-mode: DELETE
+      jdbc:
+        schema-initialization:
+          enabled: false
 
 server:
   error:

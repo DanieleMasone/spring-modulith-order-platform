@@ -27,22 +27,26 @@ class NotificationApplicationServiceTest {
     @Test
     void recordsNotificationDraftsForDomainEvents() {
         var service = new NotificationApplicationService(notifications);
+        UUID orderId = UUID.randomUUID();
+        UUID paymentId = UUID.randomUUID();
 
         service.on(new OrderCreatedEvent(
-                UUID.randomUUID(),
+                orderId,
                 UUID.randomUUID(),
                 new BigDecimal("49.97"),
                 "EUR",
                 OffsetDateTime.now()));
         service.on(new PaymentAuthorizedEvent(
-                UUID.randomUUID(),
+                paymentId,
                 UUID.randomUUID(),
                 new BigDecimal("49.97"),
                 "EUR",
                 OffsetDateTime.now()));
 
         ArgumentCaptor<NotificationDraft> drafts = ArgumentCaptor.forClass(NotificationDraft.class);
-        verify(notifications, org.mockito.Mockito.times(2)).save(drafts.capture());
+        ArgumentCaptor<UUID> sources = ArgumentCaptor.forClass(UUID.class);
+        verify(notifications, org.mockito.Mockito.times(2)).save(sources.capture(), drafts.capture());
+        assertThat(sources.getAllValues()).containsExactly(orderId, paymentId);
         assertThat(drafts.getAllValues())
                 .extracting(NotificationDraft::type)
                 .containsExactly("ORDER_CREATED", "PAYMENT_AUTHORIZED");

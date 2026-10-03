@@ -40,7 +40,7 @@ public class PaymentApplicationService implements PaymentManagement {
      *
      * @param event committed order event
      */
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, id = "payments.prepare-order-payment")
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void preparePayment(OrderCreatedEvent event) {
         payments.findByOrderId(event.orderId()).orElseGet(() -> payments.save(Payment.pending(

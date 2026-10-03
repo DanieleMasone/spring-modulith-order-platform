@@ -14,6 +14,9 @@ Build and maintain a production-oriented modular monolith order management platf
 * Cross-module references must go through named API interfaces or domain events.
 * Module dependency rules live in module-level `package-info.java` files and must remain enforceable by `ApplicationModules.verify()`.
 * Domain events are used for meaningful collaboration after state changes. Do not create decorative event chains.
+* Spring Modulith's JDBC Event Publication Registry persists internal listener deliveries in the existing PostgreSQL database. Flyway owns its v2 schema; automatic schema initialization stays disabled.
+* Keep domain-event listeners synchronous, `AFTER_COMMIT` and `REQUIRES_NEW`. Preserve their explicit listener IDs and serialized event contracts while outstanding publications exist. Do not replace them with asynchronous `@ApplicationModuleListener` without a consistency requirement.
+* Recovery is one resubmission pass per application restart, without a retry scheduler. Delete successful publications. Payment order uniqueness and notification `(source_id, type)` uniqueness must protect replay; notification insertion must remain atomic.
 
 ## Generated Files Policy
 
@@ -51,6 +54,7 @@ The landing page and User Guide must share the design assets, remain usable from
 * Do not add H2.
 * Architecture tests must fail the build when module boundaries are violated.
 * Keep tests focused on behavior and architectural risk.
+* Verify durable delivery with PostgreSQL fault injection, independent application contexts on the same database, transaction rollback and duplicate event processing.
 
 ## CI/CD Policy
 
@@ -66,7 +70,7 @@ Avoid duplicate Maven executions and unnecessary matrix builds.
 
 ## Excluded Technologies
 
-Do not introduce Kubernetes, microservices, Redis, Kafka, OAuth2, CQRS frameworks, outbox pattern, Arquillian or schema registry unless the project goals are explicitly changed.
+Do not introduce Kubernetes, microservices, Redis, Kafka, OAuth2, CQRS frameworks, external transactional outbox/event externalization infrastructure, Arquillian or schema registry unless the project goals are explicitly changed. The internal Spring Modulith Event Publication Registry is permitted solely for reliable in-process module event delivery.
 
 ## Coding Conventions
 

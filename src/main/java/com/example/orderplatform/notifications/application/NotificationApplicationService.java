@@ -30,10 +30,10 @@ public class NotificationApplicationService implements NotificationLog {
      *
      * @param event committed order event
      */
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, id = "notifications.order-created")
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void on(OrderCreatedEvent event) {
-        notifications.save(new NotificationDraft(
+        notifications.save(event.orderId(), new NotificationDraft(
                 "customer:" + event.customerId(),
                 "EMAIL",
                 "ORDER_CREATED",
@@ -45,10 +45,10 @@ public class NotificationApplicationService implements NotificationLog {
      *
      * @param event payment authorization event
      */
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, id = "notifications.payment-authorized")
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void on(PaymentAuthorizedEvent event) {
-        notifications.save(new NotificationDraft(
+        notifications.save(event.paymentId(), new NotificationDraft(
                 "operations",
                 "WEBHOOK",
                 "PAYMENT_AUTHORIZED",

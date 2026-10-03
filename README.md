@@ -49,6 +49,8 @@ Downstream collaboration uses domain events:
 * `OrderCreatedEvent` prepares a payment record and creates a customer notification.
 * `PaymentAuthorizedEvent` creates an operational notification.
 
+Spring Modulith's internal Event Publication Registry stores listener deliveries in PostgreSQL within the originating transaction. Synchronous post-commit listeners keep their own transactions; unfinished deliveries are retried once per application restart. Payment uniqueness and atomic notification deduplication make replay safe. Completed publications are deleted, so no cleanup scheduler, external broker or external outbox is required. See the User Guide for failure and recovery semantics.
+
 JPA entities and repositories stay inside module `infrastructure` packages. Public module APIs expose records and interfaces, not persistence types.
 
 ## OpenAPI First
@@ -75,7 +77,8 @@ The application uses PostgreSQL, Spring Data JPA and Flyway. PostgreSQL is also 
 ```text
 src/main/resources/db/migration
 |-- V1__initial_schema.sql
-`-- V2__seed_price_catalog.sql
+|-- V2__seed_price_catalog.sql
+`-- V3__event_publication_registry.sql
 ```
 
 The seed data is limited to the reference price catalog required for realistic order and pricing flows.
@@ -103,6 +106,7 @@ The build includes:
 * Domain unit tests for customer registration, pricing rules, order creation, payment authorization and notification drafts.
 * Application tests for use case orchestration, duplicate-customer conflicts and module API behavior.
 * Spring Boot integration tests with Testcontainers and PostgreSQL for REST happy paths, validation failures, not-found failures, business-rule failures, persistence and event consumption.
+* PostgreSQL fault-injection tests for durable publications, rollback, restart recovery and duplicate event safety.
 * Spring Modulith architecture verification through `ApplicationModules.of(OrderPlatformApplication.class).verify()`.
 * Maven artifact checks for JaCoCo, Javadoc, OpenAPI documentation and the GitHub Pages artifact.
 
@@ -150,7 +154,7 @@ The GitHub Actions workflow uses Java 21 with Maven cache, runs exactly one Mave
 
 ## Excluded Technologies
 
-The repository intentionally excludes Kubernetes, microservices, Redis, Kafka, OAuth2, CQRS frameworks, outbox pattern, Arquillian and schema registry. These technologies can be useful in other systems, but they would add operational and conceptual weight without improving this modular monolith.
+The repository intentionally excludes Kubernetes, microservices, Redis, Kafka, OAuth2, CQRS frameworks, external transactional outbox infrastructure, Arquillian and schema registry. Spring Modulith's internal Event Publication Registry only recovers in-process listener deliveries using the existing database.
 
 ## Design Trade-Offs
 
@@ -158,7 +162,7 @@ The repository intentionally excludes Kubernetes, microservices, Redis, Kafka, O
 * Domain events are used for post-commit payment and notification workflows, while customer validation and pricing stay synchronous because the order cannot be accepted without them.
 * OpenAPI-first generation is limited to REST contracts. Internal module APIs remain hand-written records and interfaces so generated DTOs do not leak into the domain model.
 * PostgreSQL and Flyway are used in both runtime and integration tests to keep schema behavior realistic. H2 is deliberately excluded.
-* The project does not include an outbox, external broker or production notification adapters. The current notification module records notification intents inside the monolith.
+* The project does not include an external outbox, external broker or production notification adapters. The current notification module records notification intents inside the monolith, with at-least-once internal delivery and domain-specific duplicate protection.
 
 ## License
 

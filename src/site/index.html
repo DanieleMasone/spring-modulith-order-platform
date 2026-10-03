@@ -58,7 +58,7 @@
       <ul class="proof-list">
         <li>One Spring Boot 4 deployable, governed by Spring Modulith.</li>
         <li>OpenAPI interfaces and DTOs generated during Maven build.</li>
-        <li>Integration tests run with Testcontainers and PostgreSQL.</li>
+        <li>PostgreSQL tests cover durable events, restart recovery and duplicate safety.</li>
         <li>User Guide, JaCoCo, Javadoc, OpenAPI and Pages artifacts are verified.</li>
       </ul>
     </aside>
@@ -71,6 +71,7 @@
         <h2 id="architecture-title">A modular monolith with explicit boundaries.</h2>
         <p>The application keeps one deployment unit and uses Spring Modulith to make module relationships visible and enforceable. Cross-module collaboration goes through named API packages or domain events.</p>
         <p>Inside each module, the project follows a pragmatic ports-and-adapters style: domain logic stays framework-independent, application services orchestrate use cases, and infrastructure contains persistence adapters.</p>
+        <p>Spring Modulith records internal event deliveries in PostgreSQL with the business transaction. Unfinished deliveries are retried on restart, with duplicate protection for payments and notification intents. No external broker is required.</p>
       </div>
 
       <div class="module-flow" role="img" aria-label="Orders calls customer and pricing APIs. Payments and notifications react to order and payment events.">

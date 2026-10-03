@@ -249,6 +249,12 @@
           <li>Application services orchestrate use cases through outbound ports where persistence is a real technical boundary.</li>
           <li>JPA entities, Spring Data repositories and persistence adapters remain private to <code>infrastructure</code>.</li>
         </ul>
+        <h3>Durable internal events</h3>
+        <p>The Spring Modulith JDBC Event Publication Registry records one delivery per transactional listener in the same PostgreSQL transaction as the order or payment change. A rollback removes both the business write and its publication records. Flyway migration <code>V3__event_publication_registry.sql</code> owns the official Modulith 2.1.1 JDBC v2 schema; automatic registry schema creation is disabled.</p>
+        <p>Listeners remain synchronous, run after commit and use independent transactions. <code>@ApplicationModuleListener</code> is not used because its asynchronous execution would change the existing API workflow. A listener failure cannot undo the originating commit: the unfinished publication remains recoverable, and a successful API write does not guarantee that all follow-up work succeeded.</p>
+        <p>With <code>spring.modulith.events.republish-outstanding-events-on-restart=true</code>, startup makes one resubmission pass over unfinished deliveries, including interrupted processing. There is no periodic retry job or tight retry loop. Fix the underlying failure before restarting; persistent failures remain outstanding and need operator attention. Concurrent publication of identical events can also leave an acknowledgement outstanding; restart recovery must remain safe even when the effects already exist. This is a single-deployable recovery policy, not a clustered work queue or a latency guarantee.</p>
+        <p>Delivery is at least once, not exactly once: a process may fail after the listener commits but before the registry records completion. Payments retain their one-payment-per-order database constraint and skip existing payments. Notifications use the order or payment UUID plus notification type, protected by a unique constraint and atomic <code>ON CONFLICT DO NOTHING</code> insertion. Concurrent or repeated delivery does not create extra notification intents or reset an authorized payment.</p>
+        <p><code>spring.modulith.events.completion-mode=DELETE</code> removes successful publications without a cleanup scheduler. Explicit listener IDs and serialized event class/field names must stay compatible while publications are outstanding. No external broker, event externalization or external transactional outbox infrastructure is involved. Existing records from before this migration are not retroactively recoverable.</p>
       </section>
 
       <section class="guide-section" id="testing-quality" aria-labelledby="testing-quality-title">
@@ -258,6 +264,7 @@
           <li><strong>Domain unit tests</strong> cover business rules and value objects without framework infrastructure.</li>
           <li><strong>Application service tests</strong> verify use-case orchestration, conflicts and module API collaboration.</li>
           <li><strong>Integration tests</strong> use Testcontainers with PostgreSQL for REST behavior, Flyway migrations, persistence and event consumers.</li>
+          <li><strong>Recovery tests</strong> inject PostgreSQL failures, restart independent application contexts against the same database and verify replay, concurrent duplicates and publication rollback.</li>
           <li><strong>Architecture tests</strong> run <code>ApplicationModules.verify()</code> and ArchUnit rules for module and package boundaries.</li>
           <li><strong>JaCoCo</strong> generates coverage for non-generated production code.</li>
           <li><strong>Javadoc and OpenAPI</strong> are generated and checked before Pages assembly.</li>
@@ -322,6 +329,10 @@
             <dd>Do not rewrite an applied migration. Restore the original migration and add the next versioned migration for schema changes.</dd>
           </div>
           <div>
+            <dt>Committed order has no prepared payment or notification</dt>
+            <dd>Inspect application logs and outstanding deliveries in <code>event_publication</code>. Repair the database or listener failure, then restart the application to resubmit those deliveries. Do not delete outstanding records or retry the original order request as a recovery mechanism.</dd>
+          </div>
+          <div>
             <dt>Generated documentation is missing</dt>
             <dd>Run <code>./mvnw clean verify</code>. Do not create or edit files manually under <code>target/pages</code>.</dd>
           </div>
@@ -330,6 +341,9 @@
             <dd>On Unix-like systems run <code>chmod +x mvnw</code>, then rerun the wrapper command.</dd>
           </div>
         </dl>
+        <p>Inspect pending delivery metadata using the local PostgreSQL service. Successful deliveries are deleted, so an empty registry is the normal state.</p>
+        <pre><code>docker compose exec postgres psql -U order_platform -d order_platform -c \
+  "SELECT id, listener_id, status, completion_attempts, publication_date FROM event_publication ORDER BY publication_date;"</code></pre>
         <a class="back-to-top" href="#top">Back to top</a>
       </section>
     </article>
