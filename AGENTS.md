@@ -86,4 +86,10 @@ Do not introduce Kubernetes, microservices, Redis, Kafka, OAuth2, CQRS framework
 
 ## Versioned Tooling
 
-Keep Maven wrapper scripts and `.mvn/wrapper/maven-wrapper.jar` versioned so local and CI builds can run without a preinstalled Maven distribution.
+Keep the Maven Wrapper scripts (`mvnw`, `mvnw.cmd`) and
+`.mvn/wrapper/maven-wrapper.properties` versioned.
+
+Use Maven 3.10.0 with the `only-script` wrapper distribution.
+The wrapper JAR is not required and must not be committed.
+
+Local and CI builds must use `./mvnw clean verify`.
