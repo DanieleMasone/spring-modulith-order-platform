@@ -127,6 +127,21 @@ class OrderPlatformRestIT extends AbstractPostgresIntegrationTest {
     }
 
     @Test
+    void validatesNestedBasketItems() throws Exception {
+        for (String path : List.of("/pricing/quote", "/orders")) {
+            for (String item : List.of(
+                    "{\"productCode\":\"\",\"quantity\":1}",
+                    "{\"productCode\":\"SKU-COFFEE-MUG\",\"quantity\":0}")) {
+                assertValidationProblem(post(path)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                { "customerId": "%s", "items": [%s] }
+                                """.formatted(UUID.randomUUID(), item)));
+            }
+        }
+    }
+
+    @Test
     void rejectsNullBasketItemsAsMalformedRequests() throws Exception {
         for (String path : List.of("/pricing/quote", "/orders")) {
             for (String items : List.of("[null]",

@@ -89,7 +89,7 @@ Do not introduce Kubernetes, microservices, Redis, Kafka, OAuth2, CQRS framework
 Keep the Maven Wrapper scripts (`mvnw`, `mvnw.cmd`) and
 `.mvn/wrapper/maven-wrapper.properties` versioned.
 
-Use Maven 3.10.0 with the `only-script` wrapper distribution.
+Use Maven 3.10.2 with the `only-script` wrapper distribution.
 The wrapper JAR is not required and must not be committed.
 
 Local and CI builds must use `./mvnw clean verify`.
