@@ -70,6 +70,12 @@ The CI workflow must:
 
 Avoid duplicate Maven executions and unnecessary matrix builds.
 
+## Dependency Maintenance Policy
+
+* Dependency and tooling reviews must be initiated manually by the repository maintainer.
+* Never add Dependabot, Renovate, cron jobs, scheduled dependency checks, update bots, scheduled maintenance workflows or automatic update pull requests.
+* Adopt stable upgrades only when justified, preserve Spring Boot dependency management and validate retained upgrades with the existing quality gates.
+
 ## Excluded Technologies
 
 Do not introduce Kubernetes, microservices, Redis, Kafka, OAuth2, CQRS frameworks, external transactional outbox/event externalization infrastructure, Arquillian or schema registry unless the project goals are explicitly changed. The internal Spring Modulith Event Publication Registry is permitted solely for reliable in-process module event delivery.
