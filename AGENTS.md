@@ -70,6 +70,10 @@ The CI workflow must:
 
 Avoid duplicate Maven executions and unnecessary matrix builds.
 
+Keep Pages write and OIDC permissions on the deploy job only. Upload Pages artifacts only from deployable runs on `main`; validation-only runs must not share the Pages concurrency group. Do not persist checkout credentials.
+
+Use the dedicated CodeQL Advanced Setup on pushes and pull requests to `main` and on manual dispatch, with Default Setup disabled. Use a compile-only Maven Wrapper build in manual mode so CodeQL sees the generated OpenAPI interfaces and DTOs. Do not rerun integration tests or add a schedule.
+
 ## Dependency Maintenance Policy
 
 * Dependency and tooling reviews must be initiated manually by the repository maintainer.

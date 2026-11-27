@@ -262,7 +262,7 @@
 
       <section class="guide-section" id="testing-quality" aria-labelledby="testing-quality-title">
         <h2 id="testing-quality-title">Testing and quality</h2>
-        <p><code>./mvnw clean verify</code> is the project quality gate and the only Maven build executed by CI.</p>
+        <p>The main CI workflow runs <code>./mvnw clean verify</code> once per run. Only push or manual runs on <code>main</code> upload the static site and deploy to GitHub Pages; pull requests validate the build without publishing.</p>
         <ul>
           <li><strong>Domain unit tests</strong> cover business rules and value objects without framework infrastructure.</li>
           <li><strong>Application service tests</strong> verify use-case orchestration, conflicts and module API collaboration.</li>
@@ -274,6 +274,10 @@
           <li><strong>Artifact checks</strong> fail the build when a required Pages entry point or shared site asset is missing.</li>
         </ul>
         <p>H2 is intentionally excluded. Using PostgreSQL in local development and integration tests keeps migration and persistence behavior aligned.</p>
+        <h3>Code scanning</h3>
+        <p>CodeQL runs separately on pushes to <code>main</code>, pull requests targeting <code>main</code> and manual runs from the Actions tab. The workflow uses Advanced Setup; leave Default Setup disabled in the repository's code scanning settings.</p>
+        <p>Manual build mode runs <code>./mvnw -B -ntp -DskipTests compile</code> so analysis includes the OpenAPI-generated interfaces and DTOs. It does not rerun tests, scan the container image or update dependencies.</p>
+        <p>Check the CodeQL run in Actions for compilation or upload failures. Review findings in Security &amp; quality &gt; Code scanning and in pull request checks. Reproduce compilation failures with the same wrapper command; for findings in generated code, inspect the OpenAPI contract and generator configuration rather than editing generated files. CodeQL reports findings for triage and is not configured as a required merge check.</p>
       </section>
 
       <section class="guide-section" id="generated-docs" aria-labelledby="generated-docs-title">

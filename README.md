@@ -152,7 +152,9 @@ The Dockerfile packages the already-built jar and does not run tests again.
 
 ## CI/CD
 
-The GitHub Actions workflow uses Java 21 with Maven cache, runs exactly one Maven `clean verify`, validates generated coverage, Javadoc, OpenAPI, User Guide and Pages artifacts, validates Docker Compose, builds the Docker image after tests pass, uploads only `target/pages` and deploys GitHub Pages through the official Pages Actions flow.
+The CI workflow uses Java 21 with Maven cache, runs one Maven `clean verify`, validates generated artifacts and Docker Compose, and builds the Docker image after tests pass. Only push or manual runs on `main` upload `target/pages` and deploy through the `github-pages` environment. Pull request builds have no Pages deployment permissions.
+
+The separate CodeQL workflow scans Java, including generated OpenAPI sources. See [Testing and quality](https://danielemasone.github.io/spring-modulith-order-platform/user-guide/#testing-quality) for triggers, results and troubleshooting.
 
 ## Excluded Technologies
 
